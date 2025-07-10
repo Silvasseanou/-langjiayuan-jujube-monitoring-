@@ -6,8 +6,14 @@ from email.mime.multipart import MIMEMultipart
 from typing import Dict, List, Optional, Tuple
 import json
 
-# 第三方通知服务
-from twilio.rest import Client as TwilioClient
+# 第三方通知服务 - 智能降级
+try:
+    from twilio.rest import Client as TwilioClient
+    HAS_TWILIO = True
+except ImportError:
+    HAS_TWILIO = False
+    logging.warning("twilio not available, SMS functionality will be disabled")
+    
 import requests
 
 from config import Config
@@ -42,6 +48,11 @@ class NotificationManager:
     def setup_sms_client(self):
         """设置短信客户端"""
         try:
+            if not HAS_TWILIO:
+                self.twilio_client = None
+                logging.warning("SMS client not available - twilio package not installed")
+                return
+                
             if self.config.TWILIO_ACCOUNT_SID and self.config.TWILIO_AUTH_TOKEN:
                 self.twilio_client = TwilioClient(
                     self.config.TWILIO_ACCOUNT_SID,
