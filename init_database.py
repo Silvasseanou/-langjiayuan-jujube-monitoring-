@@ -259,7 +259,7 @@ def create_sample_market_data(Session):
             import random
             
             platforms = ['淘宝', '天猫', '京东', '拼多多']
-            products = ['红枣', '和田红枣', '若羌红枣', '阿克苏红枣', '郎家园红枣']
+            products = ['冬枣', '和田冬枣', '若羌冬枣', '阿克苏冬枣', '郎家园冬枣']
             
             # 生成最近30天的模拟市场数据
             base_date = datetime.now() - timedelta(days=30)
@@ -275,7 +275,7 @@ def create_sample_market_data(Session):
                     sales_volume=random.randint(100, 10000),
                     rating=round(random.uniform(4.0, 5.0), 1),
                     reviews_count=random.randint(50, 5000),
-                    keywords=['红枣', '新疆', '干果', '营养'],
+                    keywords=['冬枣', '新疆', '干果', '营养'],
                     sentiment_score=round(random.uniform(-0.3, 0.8), 2)
                 )
                 

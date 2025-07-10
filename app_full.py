@@ -341,11 +341,15 @@ def api_market_analysis():
     """获取市场分析API - 使用真实爬虫数据"""
     try:
         # 强制使用爬虫功能收集数据
-        from modules.market_analysis import DataCollector, MarketAnalyzer
-        
-        # 创建爬虫实例
-        crawler = DataCollector(config)
-        analyzer = MarketAnalyzer(config) if market_analyzer else None
+        try:
+            from modules.market_analysis import DataCollector, MarketAnalyzer
+            crawler = DataCollector(config)
+            analyzer = MarketAnalyzer(config) if market_analyzer else None
+        except ImportError:
+            # 使用简化版
+            from modules.market_analysis_simplified import DataCollector, MarketAnalyzer
+            crawler = DataCollector(config)
+            analyzer = MarketAnalyzer(config)
         
         # 收集市场数据（使用真实爬虫）
         market_data = crawler.collect_ecommerce_data()
@@ -381,12 +385,12 @@ def api_market_analysis():
                 },
                 'sales_analysis': {
                     'total_sales': sum(item.get('sales_volume', 0) for item in market_data) if market_data else 12450,
-                    'trending_products': ['新疆和田枣', '山东金丝小枣', '河北赞皇枣'],
-                    'seasonal_trends': 'autumn_peak'
+                    'trending_products': ['山东沾化冬枣', '陕西大荔冬枣', '河北黄骅冬枣'],
+                    'seasonal_trends': 'winter_peak'
                 },
                 'consumer_preferences': {
                     'rating_distribution': {'5star': 45, '4star': 35, '3star': 15, '2star': 3, '1star': 2},
-                    'keyword_analysis': ['新鲜', '甜', '大粒', '营养', '健康'],
+                    'keyword_analysis': ['新鲜', '脆甜', '大粒', '营养', '健康'],
                     'sentiment_score': 0.75
                 },
                 'market_opportunities': {
@@ -408,11 +412,15 @@ def api_collect_market_data():
         platforms = request.get_json().get('platforms', ['taobao', 'tmall', 'jd', 'pinduoduo'])
         
         # 直接使用爬虫功能收集数据
-        from modules.market_analysis import DataCollector
-        if not data_collector:
+        try:
+            from modules.market_analysis import DataCollector
+            if not data_collector:
+                temp_collector = DataCollector(config)
+            else:
+                temp_collector = data_collector
+        except ImportError:
+            from modules.market_analysis_simplified import DataCollector
             temp_collector = DataCollector(config)
-        else:
-            temp_collector = data_collector
             
         # 收集电商数据 - 强制执行爬虫
         ecommerce_data = temp_collector.collect_ecommerce_data(platforms)
@@ -446,15 +454,15 @@ def api_product_trace(product_id):
             trace_info = {
                 'product_id': product_id,
                 'basic_info': {
-                    'name': '郎家园优质红枣',
-                    'variety': '和田枣',
+                    'name': '郎家园优质冬枣',
+                    'variety': '沾化冬枣',
                     'grade': 'A级',
-                    'origin': '新疆和田地区'
+                    'origin': '山东沾化地区'
                 },
                 'planting_record': {
                     'planting_date': '2024-03-15',
-                    'location': '新疆和田郎家园农场',
-                    'soil_type': '沙质土壤',
+                    'location': '山东沾化郎家园农场',
+                    'soil_type': '盐碱土壤',
                     'irrigation': '滴灌技术'
                 },
                 'growth_record': [
@@ -463,10 +471,11 @@ def api_product_trace(product_id):
                     {'date': '2024-07-20', 'stage': '结果期', 'weather': '晴朗', 'temperature': '32°C'}
                 ],
                 'harvest_info': {
-                    'harvest_date': '2024-09-10',
-                    'weather': '晴朗',
+                    'harvest_date': '2024-10-15',
+                    'weather': '晴朗微风',
                     'quality_grade': 'A级',
-                    'sugar_content': '65%'
+                    'sugar_content': '18%',
+                    'crisp_level': '优'
                 },
                 'processing_record': {
                     'processing_date': '2024-09-12',
@@ -513,11 +522,15 @@ def api_crawler_start():
     try:
         data = request.get_json()
         platform = data.get('platform', 'taobao')
-        keywords = data.get('keywords', ['红枣', '和田枣'])
+        keywords = data.get('keywords', ['冬枣', '沾化冬枣'])
         
         # 直接启动爬虫任务
-        from modules.market_analysis import DataCollector
-        crawler = DataCollector(config)
+        try:
+            from modules.market_analysis import DataCollector
+            crawler = DataCollector(config)
+        except ImportError:
+            from modules.market_analysis_simplified import DataCollector
+            crawler = DataCollector(config)
         
         # 根据平台执行对应的爬虫
         if platform == 'taobao':

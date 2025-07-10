@@ -85,8 +85,8 @@ class DataCollector:
             mock_data = []
             
             products = [
-                "红枣", "新疆红枣", "和田红枣", "若羌红枣", "阿克苏红枣",
-                "郎家园红枣", "有机红枣", "无核红枣", "大枣", "小枣"
+                "冬枣", "新疆冬枣", "和田冬枣", "若羌冬枣", "阿克苏冬枣",
+                "郎家园冬枣", "有机冬枣", "无核冬枣", "大枣", "小枣"
             ]
             
             for product in products:
@@ -100,7 +100,7 @@ class DataCollector:
                         'reviews_count': random.randint(50, 5000),
                         'shop_name': f"店铺{i+1}",
                         'location': random.choice(['新疆', '河北', '山东', '河南', '陕西']),
-                        'keywords': [product, '红枣', '干果', '零食'],
+                        'keywords': [product, '冬枣', '干果', '零食'],
                         'description': f"优质{product}，产地直销",
                         'timestamp': datetime.now() - timedelta(days=random.randint(0, 30))
                     })
@@ -125,15 +125,15 @@ class DataCollector:
                 for i in range(5):
                     mock_data.append({
                         'platform': 'tmall',
-                        'product_name': f"{brand}红枣",
+                        'product_name': f"{brand}冬枣",
                         'price': round(random.uniform(30, 300), 2),
                         'sales_volume': random.randint(500, 20000),
                         'rating': round(random.uniform(4.5, 5.0), 1),
                         'reviews_count': random.randint(200, 10000),
                         'shop_name': f"{brand}官方旗舰店",
                         'location': random.choice(['新疆', '河北', '山东']),
-                        'keywords': [brand, '红枣', '品牌', '旗舰店'],
-                        'description': f"{brand}官方正品红枣",
+                        'keywords': [brand, '冬枣', '品牌', '旗舰店'],
+                        'description': f"{brand}官方正品冬枣",
                         'timestamp': datetime.now() - timedelta(days=random.randint(0, 30))
                     })
             
@@ -151,15 +151,15 @@ class DataCollector:
             for i in range(50):
                 mock_data.append({
                     'platform': 'jd',
-                    'product_name': f"红枣产品{i+1}",
+                    'product_name': f"冬枣产品{i+1}",
                     'price': round(random.uniform(25, 250), 2),
                     'sales_volume': random.randint(300, 15000),
                     'rating': round(random.uniform(4.2, 5.0), 1),
                     'reviews_count': random.randint(100, 8000),
                     'shop_name': f"京东店铺{i+1}",
                     'location': random.choice(['新疆', '河北', '山东', '河南']),
-                    'keywords': ['红枣', '干果', '营养', '健康'],
-                    'description': "优质红枣，营养丰富",
+                    'keywords': ['冬枣', '干果', '营养', '健康'],
+                    'description': "优质冬枣，营养丰富",
                     'timestamp': datetime.now() - timedelta(days=random.randint(0, 30))
                 })
             
@@ -177,15 +177,15 @@ class DataCollector:
             for i in range(30):
                 mock_data.append({
                     'platform': 'pinduoduo',
-                    'product_name': f"拼多多红枣{i+1}",
+                    'product_name': f"拼多多冬枣{i+1}",
                     'price': round(random.uniform(15, 150), 2),
                     'sales_volume': random.randint(1000, 50000),
                     'rating': round(random.uniform(4.0, 4.8), 1),
                     'reviews_count': random.randint(500, 20000),
                     'shop_name': f"拼多多店铺{i+1}",
                     'location': random.choice(['新疆', '河北', '山东']),
-                    'keywords': ['红枣', '拼团', '优惠', '实惠'],
-                    'description': "拼团优惠红枣",
+                    'keywords': ['冬枣', '拼团', '优惠', '实惠'],
+                    'description': "拼团优惠冬枣",
                     'timestamp': datetime.now() - timedelta(days=random.randint(0, 30))
                 })
             
@@ -208,12 +208,12 @@ class DataCollector:
                 for i in range(20):
                     mock_social_data.append({
                         'platform': platform,
-                        'content': f"关于红枣的{platform}内容{i+1}",
+                        'content': f"关于冬枣的{platform}内容{i+1}",
                         'likes': random.randint(10, 10000),
                         'comments': random.randint(5, 1000),
                         'shares': random.randint(1, 500),
                         'sentiment': random.choice(sentiments),
-                        'keywords': ['红枣', '健康', '美食', '营养'],
+                        'keywords': ['冬枣', '健康', '美食', '营养'],
                         'timestamp': datetime.now() - timedelta(days=random.randint(0, 30))
                     })
             
@@ -578,24 +578,24 @@ class BrandPromotion:
         """生成品牌故事"""
         try:
             story_template = f"""
-【{brand_name}红枣的故事】
+【{brand_name}冬枣的故事】
 
-在古丝绸之路的必经之地，有一个名叫{brand_name}的小村庄。这里四季分明，日照充足，昼夜温差大，是天然的红枣种植宝地。
+在古丝绸之路的必经之地，有一个名叫{brand_name}的小村庄。这里四季分明，日照充足，昼夜温差大，是天然的冬枣种植宝地。
 
-数百年来，{brand_name}的村民们世代种植红枣，他们用最朴素的方式，遵循着自然的节拍。春天播种希望，夏天精心呵护，秋天收获甘甜，冬天为来年做准备。
+数百年来，{brand_name}的村民们世代种植冬枣，他们用最朴素的方式，遵循着自然的节拍。春天播种希望，夏天精心呵护，秋天收获甘甜，冬天为来年做准备。
 
-每一颗{brand_name}红枣，都经过了时间的洗礼和阳光的滋养。我们坚持：
+每一颗{brand_name}冬枣，都经过了时间的洗礼和阳光的滋养。我们坚持：
 - 天然种植，不使用化学农药
-- 人工精选，每颗红枣都经过严格筛选
+- 人工精选，每颗冬枣都经过严格筛选
 - 传统工艺，保持原汁原味
 - 现代科技，确保食品安全
 
-{brand_name}红枣，不仅是一种食物，更是一种文化的传承，一种对美好生活的追求。每一口都是大自然的馈赠，每一颗都承载着农民的心血。
+{brand_name}冬枣，不仅是一种食物，更是一种文化的传承，一种对美好生活的追求。每一口都是大自然的馈赠，每一颗都承载着农民的心血。
 
 选择{brand_name}，选择健康，选择传统，选择品质。
 让我们一起品味时光的甘甜，感受大自然的恩赐。
 
-{brand_name}红枣 - 传承百年的甘甜回忆
+{brand_name}冬枣 - 传承百年的甘甜回忆
             """
             
             return story_template.strip()
@@ -611,7 +611,7 @@ class BrandPromotion:
             
             # 基础描述
             base_desc = f"""
-{product_info.get('name', '优质红枣')} - 来自{product_info.get('origin', '新疆')}的天然馈赠
+{product_info.get('name', '优质冬枣')} - 来自{product_info.get('origin', '新疆')}的天然馈赠
 
 产品特点：
 ✓ 果实饱满，肉质紧实
@@ -636,7 +636,7 @@ class BrandPromotion:
             
             # 营销描述
             marketing_desc = f"""
-🔥 限时特惠 🔥 {product_info.get('name', '优质红枣')}
+🔥 限时特惠 🔥 {product_info.get('name', '优质冬枣')}
 
 【为什么选择我们】
 🌟 源产地直供，省去中间环节
@@ -672,36 +672,36 @@ class BrandPromotion:
             
             if content_type == "health":
                 health_content = [
-                    "🍎 每日一把红枣，养血补气身体好！红枣富含维生素C，是天然的美容圣品 #健康生活 #红枣养生",
-                    "🌟 熬夜加班后来几颗红枣，补充能量又养颜！上班族的必备小零食 #职场健康 #红枣能量",
-                    "👶 宝妈们注意了！红枣是产后恢复的好帮手，补血养颜两不误 #宝妈必备 #产后恢复",
-                    "🧓 老年人吃红枣益处多多：增强免疫力、改善睡眠、延缓衰老 #孝敬父母 #健康养生"
+                    "🍎 每日一把冬枣，养血补气身体好！冬枣富含维生素C，是天然的美容圣品 #健康生活 #冬枣养生",
+                    "🌟 熬夜加班后来几颗冬枣，补充能量又养颜！上班族的必备小零食 #职场健康 #冬枣能量",
+                    "👶 宝妈们注意了！冬枣是产后恢复的好帮手，补血养颜两不误 #宝妈必备 #产后恢复",
+                    "🧓 老年人吃冬枣益处多多：增强免疫力、改善睡眠、延缓衰老 #孝敬父母 #健康养生"
                 ]
                 contents.extend(health_content)
             
             elif content_type == "recipe":
                 recipe_content = [
-                    "🥘 红枣银耳汤做法：银耳泡发+红枣去核+冰糖，炖煮2小时，美容养颜！#美食教程 #养生汤品",
-                    "🍞 红枣面包自制法：面粉+红枣碎+酵母，发酵烘烤，香甜可口！#烘焙日记 #健康面包",
-                    "🍵 红枣茶的秘密：红枣+枸杞+蜂蜜，热水冲泡，温暖一整天！#养生茶饮 #冬日暖身",
-                    "🍚 红枣小米粥：小米+红枣+桂圆，慢火熬煮，营养早餐首选！#营养早餐 #健康粥品"
+                    "🥘 冬枣银耳汤做法：银耳泡发+冬枣去核+冰糖，炖煮2小时，美容养颜！#美食教程 #养生汤品",
+                    "🍞 冬枣面包自制法：面粉+冬枣碎+酵母，发酵烘烤，香甜可口！#烘焙日记 #健康面包",
+                    "🍵 冬枣茶的秘密：冬枣+枸杞+蜂蜜，热水冲泡，温暖一整天！#养生茶饮 #冬日暖身",
+                    "🍚 冬枣小米粥：小米+冬枣+桂圆，慢火熬煮，营养早餐首选！#营养早餐 #健康粥品"
                 ]
                 contents.extend(recipe_content)
             
             elif content_type == "culture":
                 culture_content = [
-                    "��️ 红枣文化小知识：在古代，红枣被称为\"木本粮食\"，是重要的营养来源 #传统文化 #食物历史",
-                    "🎎 新疆红枣的故事：得天独厚的地理环境，造就了世界上最好的红枣 #新疆特产 #地理标志",
-                    "🎊 节日送礼新选择：红枣寓意\"早生贵子\"，是传统的吉祥食品 #节日礼品 #传统寓意",
-                    "📚 诗词中的红枣：古人云\"日食三枣，长生不老\", 体现了红枣的营养价值 #古诗词 #养生智慧"
+                    "��️ 冬枣文化小知识：在古代，冬枣被称为\"木本粮食\"，是重要的营养来源 #传统文化 #食物历史",
+                    "🎎 新疆冬枣的故事：得天独厚的地理环境，造就了世界上最好的冬枣 #新疆特产 #地理标志",
+                    "🎊 节日送礼新选择：冬枣寓意\"早生贵子\"，是传统的吉祥食品 #节日礼品 #传统寓意",
+                    "📚 诗词中的冬枣：古人云\"日食三枣，长生不老\", 体现了冬枣的营养价值 #古诗词 #养生智慧"
                 ]
                 contents.extend(culture_content)
             
             else:
                 general_content = [
-                    "🌅 美好的一天从一颗红枣开始！天然甜蜜，健康美味 #早安 #健康生活",
-                    "🎯 郎家园红枣新品上市！限时特惠，抢购从速！#新品推荐 #限时优惠",
-                    "📦 包邮到家，新鲜红枣直达您的餐桌！#包邮服务 #新鲜直达",
+                    "🌅 美好的一天从一颗冬枣开始！天然甜蜜，健康美味 #早安 #健康生活",
+                    "🎯 郎家园冬枣新品上市！限时特惠，抢购从速！#新品推荐 #限时优惠",
+                    "📦 包邮到家，新鲜冬枣直达您的餐桌！#包邮服务 #新鲜直达",
                     "⭐ 五星好评如潮！感谢每一位信任我们的客户 #客户好评 #品质保证"
                 ]
                 contents.extend(general_content)
@@ -717,22 +717,22 @@ class BrandPromotion:
         try:
             if ad_type == "video":
                 return {
-                    'title': '郎家园红枣 - 传承百年的甘甜',
+                    'title': '郎家园冬枣 - 传承百年的甘甜',
                     'script': """
-                    镜头1：新疆广袤的红枣园，阳光洒在红枣树上
+                    镜头1：新疆广袤的冬枣园，阳光洒在冬枣树上
                     旁白：在古丝绸之路的起点，有一片神奇的土地
                     
-                    镜头2：农民精心采摘红枣的场景
-                    旁白：每一颗红枣，都经过时间的洗礼
+                    镜头2：农民精心采摘冬枣的场景
+                    旁白：每一颗冬枣，都经过时间的洗礼
                     
-                    镜头3：红枣的特写，展现饱满的果实
+                    镜头3：冬枣的特写，展现饱满的果实
                     旁白：天然甘甜，营养丰富
                     
-                    镜头4：家人围坐，分享红枣的温馨场景
-                    旁白：郎家园红枣，传递的不仅是甘甜，更是温暖
+                    镜头4：家人围坐，分享冬枣的温馨场景
+                    旁白：郎家园冬枣，传递的不仅是甘甜，更是温暖
                     
-                    结尾：郎家园红枣 LOGO
-                    旁白：郎家园红枣，传承百年的甘甜回忆
+                    结尾：郎家园冬枣 LOGO
+                    旁白：郎家园冬枣，传承百年的甘甜回忆
                     """,
                     'duration': '30秒',
                     'target_audience': '25-45岁家庭消费者'
@@ -741,16 +741,16 @@ class BrandPromotion:
             elif ad_type == "poster":
                 return {
                     'title': '天然甘甜 营养丰富',
-                    'main_text': '郎家园红枣\n来自新疆的天然馈赠',
+                    'main_text': '郎家园冬枣\n来自新疆的天然馈赠',
                     'sub_text': '无添加 • 原产地直供 • 传统工艺',
                     'call_to_action': '立即购买，享受健康美味',
                     'color_scheme': '红色主调，金色装饰',
-                    'layout': '红枣产品图 + 文案 + 购买按钮'
+                    'layout': '冬枣产品图 + 文案 + 购买按钮'
                 }
             
             elif ad_type == "banner":
                 return {
-                    'title': '限时特惠！郎家园红枣5折起',
+                    'title': '限时特惠！郎家园冬枣5折起',
                     'content': '新疆原产地直供 • 包邮到家 • 品质保证',
                     'cta_button': '立即抢购',
                     'urgency': '仅限今日，售完即止',
@@ -759,8 +759,8 @@ class BrandPromotion:
             
             else:
                 return {
-                    'headline': '郎家园红枣 - 健康生活的甜蜜选择',
-                    'body': '来自新疆的天然红枣，经过传统工艺精制而成。富含维生素C和铁元素，是您和家人的健康首选。',
+                    'headline': '郎家园冬枣 - 健康生活的甜蜜选择',
+                    'body': '来自新疆的天然冬枣，经过传统工艺精制而成。富含维生素C和铁元素，是您和家人的健康首选。',
                     'features': [
                         '天然无添加',
                         '营养丰富',
@@ -779,7 +779,7 @@ class BrandPromotion:
         try:
             if campaign_type == "seasonal":
                 return {
-                    'campaign_name': '春节团圆·郎家园红枣礼盒',
+                    'campaign_name': '春节团圆·郎家园冬枣礼盒',
                     'duration': '2024年1月15日 - 2024年2月28日',
                     'theme': '团圆年味，甜蜜分享',
                     'activities': [
@@ -811,17 +811,17 @@ class BrandPromotion:
             
             elif campaign_type == "health":
                 return {
-                    'campaign_name': '健康生活·红枣养生月',
+                    'campaign_name': '健康生活·冬枣养生月',
                     'duration': '30天',
                     'theme': '天然养生，健康生活',
                     'activities': [
                         {
                             'type': '健康科普',
-                            'details': '每日发布红枣养生小知识'
+                            'details': '每日发布冬枣养生小知识'
                         },
                         {
                             'type': '食谱分享',
-                            'details': '红枣美食制作教程'
+                            'details': '冬枣美食制作教程'
                         },
                         {
                             'type': '用户互动',

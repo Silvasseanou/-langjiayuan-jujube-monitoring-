@@ -187,7 +187,7 @@ def test_brand_promotion():
         
         # 测试产品描述生成
         descriptions = brand.generate_product_descriptions({
-            'name': '郎家园优质红枣',
+            'name': '郎家园优质冬枣',
             'variety': '和田枣',
             'size': '特大',
             'sweetness': '高'
