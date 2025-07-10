@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}仪表板 - 郎家园枣园农业监控系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tachometer-alt text-primary"></i> 系统仪表板</h1>
+    <div>
+        <button id="refreshButton" class="btn btn-success">
+            <i class="fas fa-sync"></i> 刷新
+        </button>
+        <small class="text-muted">最后更新: <span id="lastUpdate">{{ current_time or '刚刚' }}</span></small>
+    </div>
+</div>
+
+<!-- 系统状态 -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-thermometer-half fa-2x me-3"></i>
+                    <div>
+                        <h5 class="card-title">当前温度</h5>
+                        <h3 id="currentTemp">{{ latest_data.temperature or '25.5' }}°C</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-tint fa-2x me-3"></i>
+                    <div>
+                        <h5 class="card-title">当前湿度</h5>
+                        <h3 id="currentHumidity">{{ latest_data.humidity or '65' }}%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-seedling fa-2x me-3"></i>
+                    <div>
+                        <h5 class="card-title">土壤湿度</h5>
+                        <h3>{{ latest_data.soil_moisture or '70' }}%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="card-title">风险等级</h5>
+                        <h3>
+                            <span id="riskLevel" class="badge bg-warning">中等</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 图表区域 -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line"></i> 环境数据趋势
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="environmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-radar"></i> 病虫害风险分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 最新预警 -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bell"></i> 最新预警
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">蚜虫风险预警</h6>
+                            <small class="text-muted">温度和湿度条件适宜蚜虫繁殖</small>
+                        </div>
+                        <span class="badge bg-warning">中等</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">土壤湿度异常</h6>
+                            <small class="text-muted">部分区域土壤湿度偏低</small>
+                        </div>
+                        <span class="badge bg-info">低</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">白粉病风险</h6>
+                            <small class="text-muted">湿度过高，需要注意白粉病防治</small>
+                        </div>
+                        <span class="badge bg-warning">中等</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-leaf"></i> 推荐防控措施
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item">
+                        <h6 class="mb-1">生物防治</h6>
+                        <small class="text-muted">释放天敌昆虫控制蚜虫</small>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-success" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">有效性: 85%</small>
+                    </div>
+                    <div class="list-group-item">
+                        <h6 class="mb-1">物理防治</h6>
+                        <small class="text-muted">安装防虫网，定期清理枯枝落叶</small>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-info" style="width: 70%"></div>
+                        </div>
+                        <small class="text-muted">有效性: 70%</small>
+                    </div>
+                    <div class="list-group-item">
+                        <h6 class="mb-1">调节环境</h6>
+                        <small class="text-muted">适当通风，控制湿度</small>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-warning" style="width: 60%"></div>
+                        </div>
+                        <small class="text-muted">有效性: 60%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 系统状态 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-server"></i> 系统状态
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <span class="status-indicator status-normal"></span>
+                            <strong>数据采集</strong>
+                            <p class="text-muted small">正常运行</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <span class="status-indicator status-normal"></span>
+                            <strong>预警系统</strong>
+                            <p class="text-muted small">正常运行</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <span class="status-indicator status-normal"></span>
+                            <strong>数据库</strong>
+                            <p class="text-muted small">正常运行</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <span class="status-indicator status-normal"></span>
+                            <strong>ML模型</strong>
+                            <p class="text-muted small">正常运行</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 仪表板特定的JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化图表
+    initializeDashboardCharts();
+    
+    // 设置定时刷新
+    setInterval(refreshDashboard, 30000);
+});
+
+function initializeDashboardCharts() {
+    // 模拟数据
+    const environmentData = {
+        labels: ['6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
+        temperature: [22, 24, 26, 28, 30, 28, 26],
+        humidity: [70, 65, 60, 55, 50, 55, 60]
+    };
+    
+    // 环境数据图表
+    const envCtx = document.getElementById('environmentChart');
+    if (envCtx) {
+        new Chart(envCtx, {
+            type: 'line',
+            data: {
+                labels: environmentData.labels,
+                datasets: [{
+                    label: '温度 (°C)',
+                    data: environmentData.temperature,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: '湿度 (%)',
+                    data: environmentData.humidity,
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    // 病虫害风险图表
+    const predCtx = document.getElementById('predictionChart');
+    if (predCtx) {
+        new Chart(predCtx, {
+            type: 'radar',
+            data: {
+                labels: ['蚜虫', '介壳虫', '红蜘蛛', '叶斑病', '白粉病', '锈病'],
+                datasets: [{
+                    label: '风险等级',
+                    data: [0.7, 0.2, 0.3, 0.3, 0.6, 0.4],
+                    borderColor: '#ffc107',
+                    backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                    pointBackgroundColor: '#ffc107'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 1
+                    }
+                }
+            }
+        });
+    }
+}
+
+function refreshDashboard() {
+    // 更新时间
+    updateLastUpdateTime();
+    
+    // 这里可以添加实际的数据刷新逻辑
+    console.log('仪表板数据已刷新');
+}
+</script>
+{% endblock %} 

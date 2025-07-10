@@ -1,0 +1,555 @@
+{% extends "base.html" %}
+
+{% block title %}产品追溯 - 郎家园枣园农业监控系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-search-location text-primary"></i> 产品追溯与数据管理</h1>
+    <div>
+        <button id="generateQR" class="btn btn-success me-2">
+            <i class="fas fa-qrcode"></i> 生成二维码
+        </button>
+        <button id="exportData" class="btn btn-info">
+            <i class="fas fa-download"></i> 导出数据
+        </button>
+    </div>
+</div>
+
+<!-- 追溯查询 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search"></i> 产品追溯查询
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <input type="text" class="form-control" id="traceCode" placeholder="输入追溯码或批次号">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <input type="date" class="form-control" id="productionDate">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="input-group mb-3">
+                            <button class="btn btn-primary" onclick="searchProduct()">
+                                <i class="fas fa-search"></i> 查询
+                            </button>
+                            <button class="btn btn-secondary ms-2" onclick="resetSearch()">
+                                <i class="fas fa-undo"></i> 重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 追溯结果 -->
+<div class="row mb-4" id="traceResult" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle"></i> 追溯信息
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">基本信息</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>产品名称:</strong> 郎家园优质红枣</p>
+                                <p><strong>批次号:</strong> LJY20250710001</p>
+                                <p><strong>生产日期:</strong> 2025-07-10</p>
+                                <p><strong>包装日期:</strong> 2025-07-11</p>
+                                <p><strong>保质期:</strong> 12个月</p>
+                                <p><strong>规格:</strong> 500g/袋</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0">生产信息</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>产地:</strong> 河北省保定市</p>
+                                <p><strong>种植区域:</strong> A区第1-3排</p>
+                                <p><strong>种植面积:</strong> 2.5亩</p>
+                                <p><strong>采摘时间:</strong> 2025-07-09</p>
+                                <p><strong>采摘人员:</strong> 张师傅</p>
+                                <p><strong>质检员:</strong> 李小明</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="card border-info">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">质量检测</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>检测时间:</strong> 2025-07-10</p>
+                                <p><strong>农残检测:</strong> <span class="badge bg-success">合格</span></p>
+                                <p><strong>重金属检测:</strong> <span class="badge bg-success">合格</span></p>
+                                <p><strong>营养成分:</strong> <span class="badge bg-success">达标</span></p>
+                                <p><strong>微生物检测:</strong> <span class="badge bg-success">合格</span></p>
+                                <p><strong>检测机构:</strong> 省质检中心</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 生长环境记录 -->
+<div class="row mb-4" id="environmentRecord" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tree"></i> 生长环境记录
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="environmentChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>日期</th>
+                                        <th>温度(°C)</th>
+                                        <th>湿度(%)</th>
+                                        <th>光照(lux)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>07-05</td>
+                                        <td>25.2</td>
+                                        <td>65</td>
+                                        <td>850</td>
+                                    </tr>
+                                    <tr>
+                                        <td>07-06</td>
+                                        <td>26.1</td>
+                                        <td>62</td>
+                                        <td>920</td>
+                                    </tr>
+                                    <tr>
+                                        <td>07-07</td>
+                                        <td>24.8</td>
+                                        <td>68</td>
+                                        <td>780</td>
+                                    </tr>
+                                    <tr>
+                                        <td>07-08</td>
+                                        <td>25.5</td>
+                                        <td>64</td>
+                                        <td>860</td>
+                                    </tr>
+                                    <tr>
+                                        <td>07-09</td>
+                                        <td>25.8</td>
+                                        <td>66</td>
+                                        <td>890</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 农事操作记录 -->
+<div class="row mb-4" id="operationRecord" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clipboard-list"></i> 农事操作记录
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-primary"></div>
+                        <div class="timeline-content">
+                            <h6>2025-03-15</h6>
+                            <p class="text-muted">春季修剪</p>
+                            <p>对枣树进行整形修剪，清除病虫枝条，促进新枝生长</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-success"></div>
+                        <div class="timeline-content">
+                            <h6>2025-04-10</h6>
+                            <p class="text-muted">施肥</p>
+                            <p>施用有机肥料，增加土壤肥力，为开花结果做准备</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-info"></div>
+                        <div class="timeline-content">
+                            <h6>2025-05-20</h6>
+                            <p class="text-muted">病虫害防治</p>
+                            <p>使用生物农药防治蚜虫，保护环境和产品质量</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-warning"></div>
+                        <div class="timeline-content">
+                            <h6>2025-06-15</h6>
+                            <p class="text-muted">疏果</p>
+                            <p>适当疏果，提高枣果品质，确保营养集中</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-danger"></div>
+                        <div class="timeline-content">
+                            <h6>2025-07-09</h6>
+                            <p class="text-muted">采收</p>
+                            <p>在最佳成熟期采收，确保口感和营养价值</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 批次管理 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-boxes"></i> 批次管理
+                    </h5>
+                    <button class="btn btn-primary btn-sm" onclick="addBatch()">
+                        <i class="fas fa-plus"></i> 新增批次
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>批次号</th>
+                                <th>产品名称</th>
+                                <th>生产日期</th>
+                                <th>数量</th>
+                                <th>质量等级</th>
+                                <th>二维码</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>LJY20250710001</td>
+                                <td>优质红枣</td>
+                                <td>2025-07-10</td>
+                                <td>500kg</td>
+                                <td><span class="badge bg-success">特级</span></td>
+                                <td><button class="btn btn-sm btn-info" onclick="showQRCode('LJY20250710001')">查看</button></td>
+                                <td><span class="badge bg-success">已上市</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewBatch('LJY20250710001')">查看</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editBatch('LJY20250710001')">编辑</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>LJY20250709001</td>
+                                <td>有机红枣</td>
+                                <td>2025-07-09</td>
+                                <td>300kg</td>
+                                <td><span class="badge bg-warning">一级</span></td>
+                                <td><button class="btn btn-sm btn-info" onclick="showQRCode('LJY20250709001')">查看</button></td>
+                                <td><span class="badge bg-info">待检测</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewBatch('LJY20250709001')">查看</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editBatch('LJY20250709001')">编辑</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>LJY20250708001</td>
+                                <td>普通红枣</td>
+                                <td>2025-07-08</td>
+                                <td>800kg</td>
+                                <td><span class="badge bg-secondary">二级</span></td>
+                                <td><button class="btn btn-sm btn-info" onclick="showQRCode('LJY20250708001')">查看</button></td>
+                                <td><span class="badge bg-warning">包装中</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="viewBatch('LJY20250708001')">查看</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editBatch('LJY20250708001')">编辑</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 二维码展示模态框 -->
+<div class="modal fade" id="qrModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">产品二维码</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="qrcode" style="margin: 20px;"></div>
+                <p id="qrInfo" class="text-muted"></p>
+                <button class="btn btn-primary" onclick="downloadQR()">
+                    <i class="fas fa-download"></i> 下载二维码
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化时间轴样式
+    initializeTimeline();
+});
+
+function searchProduct() {
+    const traceCode = document.getElementById('traceCode').value;
+    const productionDate = document.getElementById('productionDate').value;
+    
+    if (!traceCode && !productionDate) {
+        alert('请输入追溯码或选择生产日期');
+        return;
+    }
+    
+    // 显示追溯结果
+    document.getElementById('traceResult').style.display = 'block';
+    document.getElementById('environmentRecord').style.display = 'block';
+    document.getElementById('operationRecord').style.display = 'block';
+    
+    // 初始化环境数据图表
+    initializeEnvironmentChart();
+    
+    // 滚动到结果区域
+    document.getElementById('traceResult').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetSearch() {
+    document.getElementById('traceCode').value = '';
+    document.getElementById('productionDate').value = '';
+    document.getElementById('traceResult').style.display = 'none';
+    document.getElementById('environmentRecord').style.display = 'none';
+    document.getElementById('operationRecord').style.display = 'none';
+}
+
+function initializeEnvironmentChart() {
+    const ctx = document.getElementById('environmentChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['07-05', '07-06', '07-07', '07-08', '07-09'],
+                datasets: [{
+                    label: '温度 (°C)',
+                    data: [25.2, 26.1, 24.8, 25.5, 25.8],
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4,
+                    yAxisID: 'y'
+                }, {
+                    label: '湿度 (%)',
+                    data: [65, 62, 68, 64, 66],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: '温度 (°C)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: '湿度 (%)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+}
+
+function initializeTimeline() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dee2e6;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 20px;
+        }
+        .timeline-marker {
+            position: absolute;
+            left: 12px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            top: 0;
+        }
+        .timeline-content h6 {
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        .timeline-content p {
+            margin-bottom: 10px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function showQRCode(batchCode) {
+    const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+    const qrContainer = document.getElementById('qrcode');
+    const qrInfo = document.getElementById('qrInfo');
+    
+    // 清空容器
+    qrContainer.innerHTML = '';
+    
+    // 生成二维码
+    const qrData = {
+        batchCode: batchCode,
+        productName: '郎家园优质红枣',
+        producer: '郎家园枣园',
+        url: `${window.location.origin}/trace/${batchCode}`
+    };
+    
+    QRCode.toCanvas(qrContainer, JSON.stringify(qrData), {
+        width: 200,
+        margin: 2,
+        color: {
+            dark: '#000000',
+            light: '#ffffff'
+        }
+    }, function (error) {
+        if (error) {
+            console.error('二维码生成失败:', error);
+            qrContainer.innerHTML = '<p class="text-danger">二维码生成失败</p>';
+        } else {
+            qrInfo.textContent = `批次号: ${batchCode}`;
+        }
+    });
+    
+    modal.show();
+}
+
+function downloadQR() {
+    const canvas = document.querySelector('#qrcode canvas');
+    if (canvas) {
+        const link = document.createElement('a');
+        link.download = `qrcode_${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+}
+
+function addBatch() {
+    alert('新增批次功能');
+}
+
+function viewBatch(batchCode) {
+    document.getElementById('traceCode').value = batchCode;
+    searchProduct();
+}
+
+function editBatch(batchCode) {
+    alert(`编辑批次: ${batchCode}`);
+}
+
+document.getElementById('generateQR').addEventListener('click', function() {
+    const batchCode = document.getElementById('traceCode').value || 'LJY20250710001';
+    showQRCode(batchCode);
+});
+
+document.getElementById('exportData').addEventListener('click', function() {
+    const btn = this;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 导出中...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        alert('追溯数据已导出');
+    }, 2000);
+});
+</script>
+{% endblock %} 

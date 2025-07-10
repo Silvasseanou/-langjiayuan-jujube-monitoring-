@@ -1,0 +1,625 @@
+{% extends "base.html" %}
+
+{% block title %}市场分析 - 郎家园枣园农业监控系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-chart-line text-primary"></i> 市场分析与品牌推广</h1>
+    <div>
+        <button id="refreshData" class="btn btn-success me-2">
+            <i class="fas fa-sync"></i> 刷新数据
+        </button>
+        <button id="exportReport" class="btn btn-info">
+            <i class="fas fa-file-pdf"></i> 导出报告
+        </button>
+    </div>
+</div>
+
+<!-- 市场概览 -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-dollar-sign fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">平均价格</h6>
+                        <h4>¥25.8/斤</h4>
+                        <small>较上周上涨5.2%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-shopping-cart fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">销量</h6>
+                        <h4>1,250 斤</h4>
+                        <small>本周销量</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-star fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">品牌评分</h6>
+                        <h4>4.8/5.0</h4>
+                        <small>客户满意度</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-percentage fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">市场份额</h6>
+                        <h4>15.2%</h4>
+                        <small>本地市场</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 价格趋势分析 -->
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-line-chart"></i> 价格趋势分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bullseye"></i> 市场定位
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <span class="badge bg-primary fs-6">高端精品</span>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>产品特色</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>有机认证</li>
+                        <li><i class="fas fa-check text-success me-2"></i>无农药残留</li>
+                        <li><i class="fas fa-check text-success me-2"></i>口感香甜</li>
+                        <li><i class="fas fa-check text-success me-2"></i>营养丰富</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>目标客群</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-primary" style="width: 45%">高端消费者 45%</div>
+                    </div>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-success" style="width: 35%">健康意识群体 35%</div>
+                    </div>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-info" style="width: 20%">礼品市场 20%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 销售渠道分析 -->
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-pie-chart"></i> 销售渠道分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="salesChannelChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-users"></i> 客户群体分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <div class="circle-progress" data-percent="65">
+                                <div class="circle-progress-inner">
+                                    <div class="circle-progress-text">65%</div>
+                                </div>
+                            </div>
+                            <p class="mt-2">线上客户</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <div class="circle-progress" data-percent="35">
+                                <div class="circle-progress-inner">
+                                    <div class="circle-progress-text">35%</div>
+                                </div>
+                            </div>
+                            <p class="mt-2">线下客户</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>年龄分布</h6>
+                    <div class="mb-2">
+                        <small>25-35岁</small>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width: 40%">40%</div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <small>35-45岁</small>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: 35%">35%</div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <small>45岁以上</small>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width: 25%">25%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 竞争对手分析 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-sword"></i> 竞争对手分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>竞争对手</th>
+                                <th>价格 (元/斤)</th>
+                                <th>市场份额</th>
+                                <th>产品特色</th>
+                                <th>优势</th>
+                                <th>劣势</th>
+                                <th>威胁程度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>新疆红枣</strong></td>
+                                <td>22.5</td>
+                                <td>25.8%</td>
+                                <td>个大肉厚</td>
+                                <td>产量大，价格低</td>
+                                <td>运输成本高</td>
+                                <td><span class="badge bg-danger">高</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>山东金丝小枣</strong></td>
+                                <td>28.0</td>
+                                <td>18.5%</td>
+                                <td>香甜可口</td>
+                                <td>品牌知名度高</td>
+                                <td>产量有限</td>
+                                <td><span class="badge bg-warning">中</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>河北沧州金丝枣</strong></td>
+                                <td>24.8</td>
+                                <td>12.3%</td>
+                                <td>营养丰富</td>
+                                <td>历史悠久</td>
+                                <td>品牌老化</td>
+                                <td><span class="badge bg-success">低</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 品牌推广策略 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bullhorn"></i> 品牌推广策略
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card border-primary">
+                            <div class="card-body text-center">
+                                <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                                <h6 class="card-title">线上推广</h6>
+                                <p class="card-text">微信小程序、淘宝店铺、短视频营销</p>
+                                <button class="btn btn-primary btn-sm">查看详情</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card border-success">
+                            <div class="card-body text-center">
+                                <i class="fas fa-store fa-3x text-success mb-3"></i>
+                                <h6 class="card-title">线下推广</h6>
+                                <p class="card-text">农产品展会、超市合作、直销点</p>
+                                <button class="btn btn-success btn-sm">查看详情</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card border-warning">
+                            <div class="card-body text-center">
+                                <i class="fas fa-certificate fa-3x text-warning mb-3"></i>
+                                <h6 class="card-title">品质认证</h6>
+                                <p class="card-text">有机认证、绿色食品、地理标志</p>
+                                <button class="btn btn-warning btn-sm">查看详情</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card border-info">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-3x text-info mb-3"></i>
+                                <h6 class="card-title">客户关系</h6>
+                                <p class="card-text">会员制度、客户服务、品牌体验</p>
+                                <button class="btn btn-info btn-sm">查看详情</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 营销活动 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calendar-alt"></i> 营销活动计划
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>活动名称</th>
+                                <th>时间</th>
+                                <th>渠道</th>
+                                <th>预算</th>
+                                <th>目标</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>夏季品鉴会</td>
+                                <td>2025-07-15</td>
+                                <td>线下活动</td>
+                                <td>¥5,000</td>
+                                <td>品牌宣传</td>
+                                <td><span class="badge bg-warning">准备中</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">编辑</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>直播带货</td>
+                                <td>2025-07-20</td>
+                                <td>抖音/快手</td>
+                                <td>¥3,000</td>
+                                <td>销量提升</td>
+                                <td><span class="badge bg-success">已完成</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-success">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>中秋节促销</td>
+                                <td>2025-09-01</td>
+                                <td>全渠道</td>
+                                <td>¥8,000</td>
+                                <td>节日营销</td>
+                                <td><span class="badge bg-info">计划中</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">编辑</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    setupEventHandlers();
+});
+
+function initializeCharts() {
+    // 价格趋势图
+    const priceCtx = document.getElementById('priceChart');
+    if (priceCtx) {
+        new Chart(priceCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+                datasets: [{
+                    label: '郎家园枣园',
+                    data: [24.5, 23.8, 25.2, 26.1, 24.8, 25.5, 25.8],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: '市场平均价',
+                    data: [22.1, 21.5, 23.0, 24.2, 22.8, 23.5, 24.0],
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: '价格 (元/斤)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // 销售渠道饼图
+    const salesCtx = document.getElementById('salesChannelChart');
+    if (salesCtx) {
+        new Chart(salesCtx, {
+            type: 'pie',
+            data: {
+                labels: ['线上商城', '批发市场', '零售商', '直销', '其他'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#007bff',
+                        '#28a745',
+                        '#ffc107',
+                        '#dc3545',
+                        '#6c757d'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+}
+
+function setupEventHandlers() {
+    // 刷新数据按钮
+    document.getElementById('refreshData').addEventListener('click', refreshMarketData);
+    
+    // 导出报告按钮
+    document.getElementById('exportReport').addEventListener('click', exportMarketReport);
+}
+
+function refreshMarketData() {
+    // 直接更新市场数据
+    updateMarketData();
+    
+    // 添加数据更新动画
+    animateMarketUpdate();
+    
+    // 显示简短提示
+    showAlert('市场数据已同步', 'success');
+}
+
+function updateMarketData() {
+    // 更新价格数据
+    const priceElement = document.querySelector('.col-lg-3:nth-child(1) h4');
+    const newPrice = (Math.random() * 5 + 23).toFixed(1);
+    priceElement.textContent = `¥${newPrice}/斤`;
+    
+    // 更新销量
+    const salesElement = document.querySelector('.col-lg-3:nth-child(2) h4');
+    const newSales = Math.floor(Math.random() * 500) + 1000;
+    salesElement.textContent = `${newSales} 斤`;
+    
+    // 更新品牌评分
+    const ratingElement = document.querySelector('.col-lg-3:nth-child(3) h4');
+    const newRating = (Math.random() * 0.5 + 4.5).toFixed(1);
+    ratingElement.textContent = `${newRating}/5.0`;
+    
+    // 更新市场份额
+    const shareElement = document.querySelector('.col-lg-3:nth-child(4) h4');
+    const newShare = (Math.random() * 5 + 12).toFixed(1);
+    shareElement.textContent = `${newShare}%`;
+}
+
+function animateMarketUpdate() {
+    // 为市场数据卡片添加动画
+    const cards = document.querySelectorAll('.col-lg-3 .card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.transform = 'scale(1.05)';
+            card.style.transition = 'transform 0.3s ease';
+            card.style.filter = 'brightness(1.1)';
+            
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+                card.style.filter = 'brightness(1)';
+            }, 400);
+        }, index * 150);
+    });
+    
+    // 为图表容器添加波动效果
+    const chartCards = document.querySelectorAll('.card .chart-container');
+    chartCards.forEach(chart => {
+        chart.style.backgroundColor = '#f8f9fa';
+        chart.style.transition = 'background-color 0.5s ease';
+        setTimeout(() => {
+            chart.style.backgroundColor = '';
+        }, 800);
+    });
+}
+
+function exportMarketReport() {
+    // 直接生成并下载报告
+    const reportContent = generateMarketReport();
+    
+    const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `市场分析报告_${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    // 显示简短提示
+    showAlert('报告已生成下载', 'success');
+}
+
+function generateMarketReport() {
+    const date = new Date().toLocaleDateString('zh-CN');
+    const time = new Date().toLocaleTimeString('zh-CN');
+    
+    return `
+============================================
+郎家园枣园 - 市场分析报告
+============================================
+生成时间: ${date} ${time}
+
+市场概况:
+- 当前价格: ¥${(Math.random() * 5 + 23).toFixed(1)}/斤
+- 本周销量: ${Math.floor(Math.random() * 500) + 1000} 斤
+- 品牌评分: ${(Math.random() * 0.5 + 4.5).toFixed(1)}/5.0
+- 市场份额: ${(Math.random() * 5 + 12).toFixed(1)}%
+
+销售渠道分析:
+- 线上商城: 35%
+- 批发市场: 25%
+- 零售商: 20%
+- 直销: 15%
+- 其他: 5%
+
+客户群体:
+- 线上客户: 65%
+- 线下客户: 35%
+- 主要年龄段: 25-45岁
+
+市场趋势:
+✓ 价格呈上涨趋势
+✓ 高端市场需求增加
+✓ 品牌认知度提升
+✓ 线上销售增长
+
+建议策略:
+1. 加强品牌建设，提升产品附加值
+2. 拓展线上销售渠道
+3. 优化产品包装和营销
+4. 加强客户关系管理
+
+报告生成完成。
+`;
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '1050';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    // 3秒后自动关闭
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 3000);
+}
+</script>
+{% endblock %} 

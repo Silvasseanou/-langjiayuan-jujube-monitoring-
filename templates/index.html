@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}郎家园枣园农业监控系统 - 首页{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="hero-section bg-success text-white rounded p-5 mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-seedling"></i> 郎家园枣园监控系统
+                    </h1>
+                    <p class="lead">
+                        专业的农业物联网监控平台，为您的枣园提供全方位的智能管理和决策支持。
+                    </p>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-tachometer-alt"></i> 进入仪表板
+                    </a>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-chart-area fa-5x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- 环境监测 -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-thermometer-half"></i> 环境监测
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">实时监控温度、湿度、土壤条件等关键环境参数。</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">温度: {{ latest_data.temperature or '25.5' }}°C</small><br>
+                        <small class="text-muted">湿度: {{ latest_data.humidity or '65' }}%</small>
+                    </div>
+                    <a href="{{ url_for('monitoring') }}" class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 病虫害预测 -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-warning text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bug"></i> 病虫害预测
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">基于AI模型的病虫害风险预测和早期预警。</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">当前风险: <span class="text-warning">中等</span></small><br>
+                        <small class="text-muted">预警数量: {{ warnings_count or '0' }}</small>
+                    </div>
+                    <a href="{{ url_for('predictions') }}" class="btn btn-warning">
+                        <i class="fas fa-brain"></i> 查看预测
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 绿色防控 -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-leaf"></i> 绿色防控
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">环保优先的防控方案，减少化学农药使用。</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">推荐方案: 生物防治</small><br>
+                        <small class="text-muted">有效性: 85%</small>
+                    </div>
+                    <a href="{{ url_for('pest_control_page') }}" class="btn btn-success">
+                        <i class="fas fa-shield-alt"></i> 查看方案
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 市场分析 -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie"></i> 市场分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">实时市场数据分析和品牌推广策略。</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">平均价格: {{ market_summary.average_price or '35.6' }}元/kg</small><br>
+                        <small class="text-muted">销量趋势: 上升</small>
+                    </div>
+                    <a href="{{ url_for('market_analysis') }}" class="btn btn-info">
+                        <i class="fas fa-chart-bar"></i> 查看分析
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 产品追溯 -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-qrcode"></i> 产品追溯
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">完整的产品生命周期追踪和质量管理。</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">追溯产品: {{ production_summary.total_products or '1,234' }}</small><br>
+                        <small class="text-muted">质量合格率: {{ production_summary.quality_rate or '98.5' }}%</small>
+                    </div>
+                    <a href="{{ url_for('traceability') }}" class="btn btn-secondary">
+                        <i class="fas fa-search"></i> 查看追溯
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统状态 -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-server"></i> 系统状态
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">系统运行状态和性能监控。</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">系统状态: <span class="text-success">正常</span></small><br>
+                        <small class="text-muted">数据更新: {{ system_status.last_update or '刚刚' }}</small>
+                    </div>
+                    <a href="{{ url_for('settings') }}" class="btn btn-dark">
+                        <i class="fas fa-cog"></i> 系统设置
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 快速统计 -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-area"></i> 快速统计
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <h3 class="text-primary">{{ latest_data.temperature or '25.5' }}°C</h3>
+                            <p class="text-muted">当前温度</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <h3 class="text-info">{{ latest_data.humidity or '65' }}%</h3>
+                            <p class="text-muted">当前湿度</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <h3 class="text-success">{{ latest_data.soil_moisture or '70' }}%</h3>
+                            <p class="text-muted">土壤湿度</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <h3 class="text-warning">{{ latest_data.light_intensity or '850' }}lux</h3>
+                            <p class="text-muted">光照强度</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

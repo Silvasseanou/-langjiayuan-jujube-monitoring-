@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}绿色防控 - 郎家园枣园农业监控系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-shield-alt text-success"></i> 绿色防控</h1>
+    <div>
+        <button id="generatePlan" class="btn btn-success me-2">
+            <i class="fas fa-magic"></i> 生成防控方案
+        </button>
+        <button id="addMethod" class="btn btn-primary">
+            <i class="fas fa-plus"></i> 新增防控方法
+        </button>
+    </div>
+</div>
+
+<!-- 防控概览 -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-leaf fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">生物防控</h6>
+                        <h4>8种</h4>
+                        <small>环保安全</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-flask fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">物理防控</h6>
+                        <h4>5种</h4>
+                        <small>无污染</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-seedling fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">栽培防控</h6>
+                        <h4>6种</h4>
+                        <small>预防为主</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-tint fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">化学防控</h6>
+                        <h4>3种</h4>
+                        <small>低毒环保</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 防控方案推荐 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb"></i> 当前推荐防控方案
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> 基于当前环境条件和病虫害预测的推荐方案</h6>
+                    <p class="mb-0">当前温度25°C，湿度65%，蚜虫风险中等。建议采用以下综合防控措施：</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-leaf me-2"></i>生物防控（主要）</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><i class="fas fa-check text-success me-2"></i> 释放瓢虫防治蚜虫</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> 喷洒苦参素杀虫剂</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> 安装昆虫信息素诱捕器</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> 培养天敌昆虫栖息地</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="card border-info">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0"><i class="fas fa-cog me-2"></i>物理防控（辅助）</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li><i class="fas fa-check text-info me-2"></i> 安装防虫网</li>
+                                    <li><i class="fas fa-check text-info me-2"></i> 设置黄色粘虫板</li>
+                                    <li><i class="fas fa-check text-info me-2"></i> 增加喷雾频率</li>
+                                    <li><i class="fas fa-check text-info me-2"></i> 修剪过密枝条</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 防控方法库 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-database"></i> 防控方法库
+                    </h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary active" data-category="all">全部</button>
+                        <button type="button" class="btn btn-sm btn-outline-success" data-category="biological">生物</button>
+                        <button type="button" class="btn btn-sm btn-outline-info" data-category="physical">物理</button>
+                        <button type="button" class="btn btn-sm btn-outline-warning" data-category="cultural">栽培</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-category="chemical">化学</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row" id="methodsContainer">
+                    <!-- 生物防控方法 -->
+                    <div class="col-lg-4 col-md-6 mb-3 method-card" data-category="biological">
+                        <div class="card h-100 border-success">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="fas fa-bug me-2"></i>瓢虫防治
+                                </h6>
+                                <p class="card-text">释放瓢虫成虫和幼虫，有效控制蚜虫数量</p>
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <strong>防治对象:</strong> 蚜虫、介壳虫<br>
+                                        <strong>效果:</strong> 85%防治效果<br>
+                                        <strong>持续时间:</strong> 15-20天
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-success">生物防控</span>
+                                    <button class="btn btn-sm btn-outline-success">详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-3 method-card" data-category="biological">
+                        <div class="card h-100 border-success">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="fas fa-leaf me-2"></i>苦参素喷洒
+                                </h6>
+                                <p class="card-text">天然植物源杀虫剂，对害虫具有胃毒和触杀作用</p>
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <strong>防治对象:</strong> 蚜虫、红蜘蛛<br>
+                                        <strong>效果:</strong> 80%防治效果<br>
+                                        <strong>持续时间:</strong> 7-10天
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-success">生物防控</span>
+                                    <button class="btn btn-sm btn-outline-success">详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 物理防控方法 -->
+                    <div class="col-lg-4 col-md-6 mb-3 method-card" data-category="physical">
+                        <div class="card h-100 border-info">
+                            <div class="card-body">
+                                <h6 class="card-title text-info">
+                                    <i class="fas fa-th me-2"></i>防虫网覆盖
+                                </h6>
+                                <p class="card-text">物理隔离害虫，防止成虫产卵和幼虫入侵</p>
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <strong>防治对象:</strong> 飞虫、蛾类<br>
+                                        <strong>效果:</strong> 90%防治效果<br>
+                                        <strong>持续时间:</strong> 整个生长季
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-info">物理防控</span>
+                                    <button class="btn btn-sm btn-outline-info">详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-6 mb-3 method-card" data-category="physical">
+                        <div class="card h-100 border-info">
+                            <div class="card-body">
+                                <h6 class="card-title text-info">
+                                    <i class="fas fa-square me-2"></i>黄色粘虫板
+                                </h6>
+                                <p class="card-text">利用害虫趋黄性诱杀成虫，监测虫害发生</p>
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <strong>防治对象:</strong> 蚜虫、白粉虱<br>
+                                        <strong>效果:</strong> 70%防治效果<br>
+                                        <strong>持续时间:</strong> 15-30天
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-info">物理防控</span>
+                                    <button class="btn btn-sm btn-outline-info">详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 栽培防控方法 -->
+                    <div class="col-lg-4 col-md-6 mb-3 method-card" data-category="cultural">
+                        <div class="card h-100 border-warning">
+                            <div class="card-body">
+                                <h6 class="card-title text-warning">
+                                    <i class="fas fa-cut me-2"></i>修剪通风
+                                </h6>
+                                <p class="card-text">合理修剪枝条，改善通风透光条件</p>
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <strong>防治对象:</strong> 真菌病害<br>
+                                        <strong>效果:</strong> 预防性60%<br>
+                                        <strong>持续时间:</strong> 整个生长季
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-warning">栽培防控</span>
+                                    <button class="btn btn-sm btn-outline-warning">详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 防控记录 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history"></i> 防控记录
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>防控方法</th>
+                                <th>类型</th>
+                                <th>目标害虫</th>
+                                <th>执行区域</th>
+                                <th>效果评估</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-07-09</td>
+                                <td>瓢虫释放</td>
+                                <td><span class="badge bg-success">生物防控</span></td>
+                                <td>蚜虫</td>
+                                <td>A区1-5排</td>
+                                <td><span class="badge bg-success">优秀</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-08</td>
+                                <td>黄色粘虫板</td>
+                                <td><span class="badge bg-info">物理防控</span></td>
+                                <td>白粉虱</td>
+                                <td>B区全区</td>
+                                <td><span class="badge bg-warning">良好</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">查看</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-07</td>
+                                <td>苦参素喷洒</td>
+                                <td><span class="badge bg-success">生物防控</span></td>
+                                <td>红蜘蛛</td>
+                                <td>C区2-4排</td>
+                                <td><span class="badge bg-success">优秀</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">查看</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setupEventHandlers();
+});
+
+function setupEventHandlers() {
+    // 生成防控方案按钮
+    document.getElementById('generatePlan').addEventListener('click', generateControlPlan);
+    
+    // 新增防控方法按钮
+    document.getElementById('addMethod').addEventListener('click', function() {
+        alert('新增防控方法功能');
+    });
+    
+    // 防控方法分类筛选
+    document.querySelectorAll('[data-category]').forEach(button => {
+        button.addEventListener('click', function() {
+            // 更新按钮状态
+            document.querySelectorAll('[data-category]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 筛选方法卡片
+            const category = this.dataset.category;
+            filterMethods(category);
+        });
+    });
+}
+
+function generateControlPlan() {
+    const btn = document.getElementById('generatePlan');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+    btn.disabled = true;
+    
+    // 模拟API调用
+    setTimeout(() => {
+        // 生成新的防控方案
+        console.log('生成新的防控方案');
+        
+        // 恢复按钮状态
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        
+        // 显示成功消息
+        showAlert('防控方案已生成', 'success');
+    }, 2000);
+}
+
+function filterMethods(category) {
+    const methodCards = document.querySelectorAll('.method-card');
+    
+    methodCards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '1050';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    // 3秒后自动关闭
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 3000);
+}
+</script>
+{% endblock %} 

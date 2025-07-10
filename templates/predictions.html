@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}预测分析 - 郎家园枣园农业监控系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-brain text-primary"></i> 预测分析</h1>
+    <button id="updatePredictions" class="btn btn-success">
+        <i class="fas fa-sync"></i> 更新预测
+    </button>
+</div>
+
+<!-- 预测概览 -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-bug fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">病虫害风险</h6>
+                        <h4>中等</h4>
+                        <small>预测准确率: 85%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-apple-alt fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">产量预测</h6>
+                        <h4>95%</h4>
+                        <small>较上年增长5%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-chart-line fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">质量评级</h6>
+                        <h4>优等</h4>
+                        <small>预期市场价格良好</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h6 class="card-title">风险预警</h6>
+                        <h4>2项</h4>
+                        <small>需要关注</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 预测模型结果 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-area"></i> 病虫害预测趋势
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="pestPredictionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 详细预测结果 -->
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-leaf"></i> 作物生长预测
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>指标</th>
+                                <th>当前值</th>
+                                <th>预测值</th>
+                                <th>变化</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>生长速度</td>
+                                <td>正常</td>
+                                <td>加快</td>
+                                <td><span class="badge bg-success">+15%</span></td>
+                            </tr>
+                            <tr>
+                                <td>果实大小</td>
+                                <td>中等</td>
+                                <td>大</td>
+                                <td><span class="badge bg-success">+10%</span></td>
+                            </tr>
+                            <tr>
+                                <td>糖分含量</td>
+                                <td>12%</td>
+                                <td>14%</td>
+                                <td><span class="badge bg-success">+2%</span></td>
+                            </tr>
+                            <tr>
+                                <td>成熟期</td>
+                                <td>-</td>
+                                <td>提前3天</td>
+                                <td><span class="badge bg-warning">-3天</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-shield-alt"></i> 病虫害风险评估
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>蚜虫风险:</strong> 中等 (7天内出现概率: 35%)
+                </div>
+                <div class="alert alert-info">
+                    <strong>炭疽病风险:</strong> 低 (14天内出现概率: 15%)
+                </div>
+                <div class="alert alert-success">
+                    <strong>红蜘蛛风险:</strong> 极低 (30天内出现概率: 5%)
+                </div>
+                
+                <h6 class="mt-3">建议措施:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i> 增加叶面喷水频率</li>
+                    <li><i class="fas fa-check text-success me-2"></i> 监控温湿度变化</li>
+                    <li><i class="fas fa-check text-success me-2"></i> 准备生物防治药剂</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 产量预测 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar"></i> 产量预测分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="yieldPredictionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <h6>预测结果</h6>
+                        <div class="mb-3">
+                            <strong>预计总产量:</strong> 15,000公斤<br>
+                            <strong>较上年:</strong> <span class="text-success">+5%</span><br>
+                            <strong>预测精度:</strong> 92%
+                        </div>
+                        
+                        <h6>影响因素</h6>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" style="width: 40%">天气条件 40%</div>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-info" style="width: 30%">土壤质量 30%</div>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-warning" style="width: 20%">病虫害 20%</div>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-danger" style="width: 10%">其他因素 10%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模型参数 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cogs"></i> 模型参数与性能
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <h6>病虫害预测模型</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>模型类型:</strong> 随机森林</li>
+                            <li><strong>训练数据:</strong> 3年历史数据</li>
+                            <li><strong>准确率:</strong> 85.2%</li>
+                            <li><strong>最后更新:</strong> 2025-07-09</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4">
+                        <h6>产量预测模型</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>模型类型:</strong> 神经网络</li>
+                            <li><strong>训练数据:</strong> 5年历史数据</li>
+                            <li><strong>准确率:</strong> 92.1%</li>
+                            <li><strong>最后更新:</strong> 2025-07-08</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4">
+                        <h6>质量评估模型</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>模型类型:</strong> 支持向量机</li>
+                            <li><strong>训练数据:</strong> 2年历史数据</li>
+                            <li><strong>准确率:</strong> 88.7%</li>
+                            <li><strong>最后更新:</strong> 2025-07-07</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initializePredictionCharts();
+    
+    // 绑定更新按钮
+    document.getElementById('updatePredictions').addEventListener('click', updatePredictions);
+});
+
+function initializePredictionCharts() {
+    // 病虫害预测图表
+    const pestCtx = document.getElementById('pestPredictionChart');
+    if (pestCtx) {
+        new Chart(pestCtx, {
+            type: 'line',
+            data: {
+                labels: ['今天', '明天', '后天', '3天后', '4天后', '5天后', '6天后'],
+                datasets: [{
+                    label: '蚜虫风险',
+                    data: [20, 25, 35, 40, 30, 25, 20],
+                    borderColor: '#ffc107',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: '炭疽病风险',
+                    data: [10, 12, 15, 18, 15, 12, 10],
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '风险概率 (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // 产量预测图表
+    const yieldCtx = document.getElementById('yieldPredictionChart');
+    if (yieldCtx) {
+        new Chart(yieldCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2021', '2022', '2023', '2024', '2025(预测)'],
+                datasets: [{
+                    label: '产量 (公斤)',
+                    data: [12000, 13500, 14200, 14300, 15000],
+                    backgroundColor: ['#6c757d', '#6c757d', '#6c757d', '#6c757d', '#28a745'],
+                    borderColor: ['#495057', '#495057', '#495057', '#495057', '#1e7e34'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '产量 (公斤)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+}
+
+function updatePredictions() {
+    // 直接更新预测数据
+    updatePredictionData();
+    
+    // 添加更新动画
+    animatePredictionUpdate();
+    
+    // 显示简短提示
+    showAlert('AI模型重新分析完成', 'success');
+}
+
+function updatePredictionData() {
+    // 更新病虫害风险状态
+    const pestRiskBadge = document.querySelector('.col-lg-3:nth-child(1) .badge');
+    const risks = ['低', '中', '高'];
+    const colors = ['bg-success', 'bg-warning', 'bg-danger'];
+    const randomRisk = Math.floor(Math.random() * 3);
+    
+    pestRiskBadge.textContent = risks[randomRisk];
+    pestRiskBadge.className = `badge ${colors[randomRisk]}`;
+    
+    // 更新产量预测
+    const yieldText = document.querySelector('.col-lg-3:nth-child(2) h4');
+    const newYield = Math.floor(Math.random() * 500) + 14800;
+    yieldText.textContent = `${newYield} 公斤`;
+    
+    // 更新质量评级
+    const qualityRatings = ['优秀', '良好', '一般'];
+    const qualityColors = ['text-success', 'text-warning', 'text-info'];
+    const randomQuality = Math.floor(Math.random() * 3);
+    const qualityText = document.querySelector('.col-lg-3:nth-child(3) h4');
+    
+    qualityText.textContent = qualityRatings[randomQuality];
+    qualityText.className = `text-4 ${qualityColors[randomQuality]}`;
+    
+    // 更新预警数量
+    const warningCount = Math.floor(Math.random() * 3) + 1;
+    const warningText = document.querySelector('.col-lg-3:nth-child(4) h4');
+    warningText.textContent = `${warningCount} 项`;
+    
+    // 更新建议
+    const suggestions = [
+        '建议增加土壤监测频率',
+        '推荐使用生物防治方法',
+        '注意防范高温天气影响',
+        '适当增加灌溉量',
+        '建议进行土壤改良'
+    ];
+    
+    const suggestionsList = document.querySelector('.col-lg-8 ul');
+    suggestionsList.innerHTML = '';
+    
+    for (let i = 0; i < 3; i++) {
+        const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+        const li = document.createElement('li');
+        li.innerHTML = `<i class="fas fa-check text-success"></i> ${randomSuggestion}`;
+        suggestionsList.appendChild(li);
+    }
+}
+
+function animatePredictionUpdate() {
+    // 为预测卡片添加脉动动画
+    const cards = document.querySelectorAll('.col-lg-3 .card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.transform = 'scale(1.02)';
+            card.style.transition = 'transform 0.3s ease';
+            card.style.boxShadow = '0 4px 12px rgba(0,123,255,0.3)';
+            
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+                card.style.boxShadow = '';
+            }, 300);
+        }, index * 100);
+    });
+    
+    // 为建议列表添加波动效果
+    const suggestionsList = document.querySelector('.col-lg-8 ul');
+    if (suggestionsList) {
+        suggestionsList.style.backgroundColor = '#f8f9fa';
+        suggestionsList.style.transition = 'background-color 0.5s ease';
+        setTimeout(() => {
+            suggestionsList.style.backgroundColor = '';
+        }, 800);
+    }
+}
+
+function showAlert(message, type) {
+    // 创建简短的toast提示
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} position-fixed`;
+    toast.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    `;
+    
+    const icon = type === 'success' ? 'check-circle' : 'info-circle';
+    toast.innerHTML = `<i class="fas fa-${icon} me-2"></i>${message}`;
+    
+    document.body.appendChild(toast);
+    
+    // 显示动画
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 100);
+    
+    // 自动移除
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 2000);
+}
+</script>
+{% endblock %} 

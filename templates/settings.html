@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+
+{% block title %}系统设置 - 郎家园枣园农业监控系统{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-cog text-primary"></i> 系统设置</h1>
+    <button id="saveAllSettings" class="btn btn-success">
+        <i class="fas fa-save"></i> 保存所有设置
+    </button>
+</div>
+
+<div class="row">
+    <!-- 系统配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-server"></i> 系统配置
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="systemConfigForm">
+                    <div class="mb-3">
+                        <label for="systemName" class="form-label">系统名称</label>
+                        <input type="text" class="form-control" id="systemName" value="郎家园枣园农业监控系统">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="updateInterval" class="form-label">数据更新间隔 (秒)</label>
+                        <select class="form-select" id="updateInterval">
+                            <option value="10">10秒</option>
+                            <option value="30" selected>30秒</option>
+                            <option value="60">60秒</option>
+                            <option value="300">5分钟</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="dataRetention" class="form-label">数据保留时间 (天)</label>
+                        <input type="number" class="form-control" id="dataRetention" value="90" min="1" max="365">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="enableAutoCleanup" checked>
+                            <label class="form-check-label" for="enableAutoCleanup">
+                                启用自动清理过期数据
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 保存系统配置
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 监测配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-thermometer-half"></i> 监测配置
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="monitoringConfigForm">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="tempMin" class="form-label">温度最小值 (°C)</label>
+                            <input type="number" class="form-control" id="tempMin" value="15" step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label for="tempMax" class="form-label">温度最大值 (°C)</label>
+                            <input type="number" class="form-control" id="tempMax" value="35" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="humidityMin" class="form-label">湿度最小值 (%)</label>
+                            <input type="number" class="form-control" id="humidityMin" value="40" step="1">
+                        </div>
+                        <div class="col-6">
+                            <label for="humidityMax" class="form-label">湿度最大值 (%)</label>
+                            <input type="number" class="form-control" id="humidityMax" value="80" step="1">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="soilMoistureMin" class="form-label">土壤湿度最小值 (%)</label>
+                            <input type="number" class="form-control" id="soilMoistureMin" value="60" step="1">
+                        </div>
+                        <div class="col-6">
+                            <label for="soilMoistureMax" class="form-label">土壤湿度最大值 (%)</label>
+                            <input type="number" class="form-control" id="soilMoistureMax" value="85" step="1">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 保存监测配置
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 通知设置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bell"></i> 通知设置
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="notificationConfigForm">
+                    <div class="mb-3">
+                        <label for="emailAddress" class="form-label">邮箱地址</label>
+                        <input type="email" class="form-control" id="emailAddress" value="2842888888@qq.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">手机号码</label>
+                        <input type="tel" class="form-control" id="phoneNumber" value="15887122055">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">通知方式</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="emailNotification" checked>
+                            <label class="form-check-label" for="emailNotification">
+                                邮件通知
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="smsNotification" checked>
+                            <label class="form-check-label" for="smsNotification">
+                                短信通知
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="browserNotification">
+                            <label class="form-check-label" for="browserNotification">
+                                浏览器通知
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 保存通知设置
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 系统维护 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tools"></i> 系统维护
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>数据库维护</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary" id="optimizeDB">
+                            <i class="fas fa-rocket"></i> 优化数据库
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" id="cleanupTempFiles">
+                            <i class="fas fa-trash-alt"></i> 清理临时文件
+                        </button>
+                        <button type="button" class="btn btn-outline-info" id="exportSystemData">
+                            <i class="fas fa-download"></i> 导出系统数据
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>系统重启</h6>
+                    <button type="button" class="btn btn-danger" id="restartSystem">
+                        <i class="fas fa-sync-alt"></i> 重启系统
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 系统状态 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line"></i> 系统状态
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>系统运行时间</h6>
+                                <h4 id="systemUptime" class="text-primary">12天 3小时</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>数据库大小</h6>
+                                <h4 id="dbSize" class="text-success">156.8 MB</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>今日数据点</h6>
+                                <h4 id="todayDataPoints" class="text-info">2,847</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h6>系统状态</h6>
+                                <span class="badge bg-success fs-6">正常运行</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 成功提示模态框 -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">操作成功</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <p id="successMessage">设置已保存成功！</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 绑定事件
+    setupEventHandlers();
+    
+    // 更新系统状态
+    updateSystemStatus();
+    
+    // 定期更新状态
+    setInterval(updateSystemStatus, 30000);
+});
+
+function setupEventHandlers() {
+    // 系统配置表单
+    document.getElementById('systemConfigForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveSystemConfig();
+    });
+    
+    // 监测配置表单
+    document.getElementById('monitoringConfigForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveMonitoringConfig();
+    });
+    
+    // 通知配置表单
+    document.getElementById('notificationConfigForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveNotificationConfig();
+    });
+    
+    // 系统维护按钮
+    document.getElementById('optimizeDB').addEventListener('click', optimizeDatabase);
+    document.getElementById('cleanupTempFiles').addEventListener('click', cleanupTempFiles);
+    document.getElementById('exportSystemData').addEventListener('click', exportSystemData);
+    document.getElementById('restartSystem').addEventListener('click', restartSystem);
+    
+    // 保存所有设置
+    document.getElementById('saveAllSettings').addEventListener('click', saveAllSettings);
+}
+
+function saveSystemConfig() {
+    const config = {
+        systemName: document.getElementById('systemName').value,
+        updateInterval: document.getElementById('updateInterval').value,
+        dataRetention: document.getElementById('dataRetention').value,
+        enableAutoCleanup: document.getElementById('enableAutoCleanup').checked
+    };
+    
+    showLoadingButton('systemConfigForm', 'submit');
+    
+    // 模拟保存配置
+    setTimeout(() => {
+        showSuccessMessage('系统配置已保存！');
+        hideLoadingButton('systemConfigForm', 'submit');
+    }, 1000);
+}
+
+function saveMonitoringConfig() {
+    const config = {
+        temperature: {
+            min: parseFloat(document.getElementById('tempMin').value),
+            max: parseFloat(document.getElementById('tempMax').value)
+        },
+        humidity: {
+            min: parseInt(document.getElementById('humidityMin').value),
+            max: parseInt(document.getElementById('humidityMax').value)
+        },
+        soilMoisture: {
+            min: parseInt(document.getElementById('soilMoistureMin').value),
+            max: parseInt(document.getElementById('soilMoistureMax').value)
+        }
+    };
+    
+    showLoadingButton('monitoringConfigForm', 'submit');
+    
+    // 模拟保存配置
+    setTimeout(() => {
+        showSuccessMessage('监测配置已保存！');
+        hideLoadingButton('monitoringConfigForm', 'submit');
+    }, 1000);
+}
+
+function saveNotificationConfig() {
+    const config = {
+        email: document.getElementById('emailAddress').value,
+        phone: document.getElementById('phoneNumber').value,
+        notifications: {
+            email: document.getElementById('emailNotification').checked,
+            sms: document.getElementById('smsNotification').checked,
+            browser: document.getElementById('browserNotification').checked
+        }
+    };
+    
+    showLoadingButton('notificationConfigForm', 'submit');
+    
+    // 模拟保存配置
+    setTimeout(() => {
+        showSuccessMessage('通知设置已保存！');
+        hideLoadingButton('notificationConfigForm', 'submit');
+    }, 1000);
+}
+
+function optimizeDatabase() {
+    const button = document.getElementById('optimizeDB');
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 优化中...';
+    button.disabled = true;
+    
+    // 模拟数据库优化
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check"></i> 优化完成';
+        showSuccessMessage('数据库优化完成！');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
+    }, 3000);
+}
+
+function cleanupTempFiles() {
+    const button = document.getElementById('cleanupTempFiles');
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 清理中...';
+    button.disabled = true;
+    
+    // 模拟清理临时文件
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check"></i> 清理完成';
+        showSuccessMessage('临时文件清理完成！');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
+    }, 2000);
+}
+
+function exportSystemData() {
+    const button = document.getElementById('exportSystemData');
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 导出中...';
+    button.disabled = true;
+    
+    // 模拟导出数据
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check"></i> 导出完成';
+        showSuccessMessage('系统数据导出完成！');
+        
+        // 模拟文件下载
+        const blob = new Blob(['系统数据导出文件'], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'system_data_export.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
+    }, 2000);
+}
+
+function restartSystem() {
+    if (confirm('确定要重启系统吗？系统将暂时不可用。')) {
+        const button = document.getElementById('restartSystem');
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 重启中...';
+        button.disabled = true;
+        
+        // 模拟系统重启
+        setTimeout(() => {
+            showSuccessMessage('系统重启完成！');
+            window.location.reload();
+        }, 3000);
+    }
+}
+
+function saveAllSettings() {
+    const button = document.getElementById('saveAllSettings');
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+    button.disabled = true;
+    
+    // 模拟保存所有设置
+    setTimeout(() => {
+        button.innerHTML = '<i class="fas fa-check"></i> 保存完成';
+        showSuccessMessage('所有设置已保存！');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
+    }, 2000);
+}
+
+function updateSystemStatus() {
+    // 模拟更新系统状态
+    const uptimeElement = document.getElementById('systemUptime');
+    const dbSizeElement = document.getElementById('dbSize');
+    const dataPointsElement = document.getElementById('todayDataPoints');
+    
+    if (uptimeElement) {
+        // 简单的运行时间更新
+        const currentTime = new Date().toLocaleTimeString();
+        uptimeElement.textContent = `${Math.floor(Math.random() * 20) + 1}天 ${Math.floor(Math.random() * 24)}小时`;
+    }
+    
+    if (dbSizeElement) {
+        // 数据库大小随机变化
+        const size = (Math.random() * 100 + 150).toFixed(1);
+        dbSizeElement.textContent = `${size} MB`;
+    }
+    
+    if (dataPointsElement) {
+        // 今日数据点随机变化
+        const points = Math.floor(Math.random() * 1000) + 2000;
+        dataPointsElement.textContent = points.toLocaleString();
+    }
+}
+
+function showLoadingButton(formId, buttonType) {
+    const form = document.getElementById(formId);
+    const button = form.querySelector(`button[type="${buttonType}"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+    }
+}
+
+function hideLoadingButton(formId, buttonType) {
+    const form = document.getElementById(formId);
+    const button = form.querySelector(`button[type="${buttonType}"]`);
+    if (button) {
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-save"></i> 保存';
+    }
+}
+
+function showSuccessMessage(message) {
+    document.getElementById('successMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('successModal')).show();
+}
+</script>
+{% endblock %} 
