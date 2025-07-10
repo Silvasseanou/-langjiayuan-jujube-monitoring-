@@ -123,6 +123,41 @@ def index():
         logging.error(f"Error in index route: {e}")
         return render_template('error.html', error=str(e))
 
+@app.route('/dashboard')
+def dashboard():
+    """仪表板"""
+    try:
+        # 模拟数据
+        dashboard_data = {
+            'latest_data': {
+                'temperature': 25.5,
+                'humidity': 65.0,
+                'soil_moisture': 70.0,
+                'light_intensity': 850,
+                'wind_speed': 5.2,
+                'rainfall': 0.0,
+                'air_pressure': 1013.25
+            },
+            'warnings': [
+                {'type': 'pest', 'message': '蚜虫风险中等', 'level': 'warning'},
+                {'type': 'environment', 'message': '土壤湿度偏低', 'level': 'info'}
+            ],
+            'market_summary': {
+                'average_price': 35.6,
+                'total_sales': 1234
+            },
+            'production_summary': {
+                'total_products': 1234,
+                'quality_rate': 98.5
+            },
+            'current_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        return render_template('dashboard.html', **dashboard_data)
+    except Exception as e:
+        logging.error(f"Error in dashboard route: {e}")
+        return render_template('error.html', error=str(e))
+
 @app.route('/api/environmental-data')
 def api_environmental_data():
     """获取环境数据API"""
@@ -194,6 +229,48 @@ def api_predictions():
         return jsonify(prediction)
     except Exception as e:
         logging.error(f"Error in predictions API: {e}")
+        return jsonify({'error': str(e)})
+
+@app.route('/api/warnings')
+def api_warnings():
+    """获取预警信息API"""
+    try:
+        warnings = [
+            {
+                'id': 1,
+                'type': 'pest',
+                'level': 'warning',
+                'message': '蚜虫风险中等，建议加强监控',
+                'timestamp': datetime.now().isoformat()
+            },
+            {
+                'id': 2,
+                'type': 'environment',
+                'level': 'info',
+                'message': '土壤湿度偏低，建议适当浇水',
+                'timestamp': (datetime.now() - timedelta(hours=2)).isoformat()
+            }
+        ]
+        
+        return jsonify(warnings)
+    except Exception as e:
+        logging.error(f"Error in warnings API: {e}")
+        return jsonify({'error': str(e)})
+
+@app.route('/api/market-analysis')
+def api_market_analysis():
+    """获取市场分析API"""
+    try:
+        analysis = {
+            'average_price': 35.6,
+            'total_sales': 1234,
+            'market_trend': 'stable',
+            'recommendations': ['优化产品质量', '扩大销售渠道']
+        }
+        
+        return jsonify(analysis)
+    except Exception as e:
+        logging.error(f"Error in market analysis API: {e}")
         return jsonify({'error': str(e)})
 
 @app.route('/monitoring')
