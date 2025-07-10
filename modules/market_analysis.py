@@ -9,7 +9,7 @@ import time
 import random
 from urllib.parse import urlencode
 
-# 网络爬虫库
+# 网络爬虫库 - 真实爬虫功能
 import scrapy
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
@@ -30,8 +30,13 @@ from wordcloud import WordCloud
 import jieba
 from textblob import TextBlob
 
-# 自然语言处理
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+# 自然语言处理 - 智能降级
+try:
+    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+    HAS_TRANSFORMERS = True
+except ImportError:
+    HAS_TRANSFORMERS = False
+    logging.warning("transformers not available, using textblob for sentiment analysis")
 
 from config import Config
 from models.database import MarketData, init_database
@@ -690,7 +695,7 @@ class BrandPromotion:
             
             elif content_type == "culture":
                 culture_content = [
-                    "��️ 冬枣文化小知识：在古代，冬枣被称为\"木本粮食\"，是重要的营养来源 #传统文化 #食物历史",
+                    "🎎 冬枣文化小知识：在古代，冬枣被称为\"木本粮食\"，是重要的营养来源 #传统文化 #食物历史",
                     "🎎 新疆冬枣的故事：得天独厚的地理环境，造就了世界上最好的冬枣 #新疆特产 #地理标志",
                     "🎊 节日送礼新选择：冬枣寓意\"早生贵子\"，是传统的吉祥食品 #节日礼品 #传统寓意",
                     "📚 诗词中的冬枣：古人云\"日食三枣，长生不老\", 体现了冬枣的营养价值 #古诗词 #养生智慧"
