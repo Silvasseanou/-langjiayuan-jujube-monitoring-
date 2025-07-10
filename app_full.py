@@ -153,11 +153,19 @@ def index():
         latest_data = get_latest_environmental_data()
         
         # 获取当前风险预测
-        current_risk = {
-            "risk_level": "medium", 
-            "probability": 0.5, 
-            "details": "当前环境条件适中，建议加强监控"
-        }
+        if data_preprocessor:
+            # 尝试获取真实预测
+            current_risk = {
+                "risk_level": "medium", 
+                "probability": 0.5, 
+                "details": "当前环境条件适中，建议加强监控"
+            }
+        else:
+            current_risk = {
+                "risk_level": "medium", 
+                "probability": 0.5, 
+                "details": "当前环境条件适中，建议加强监控"
+            }
         
         # 获取市场摘要
         market_summary = get_market_summary()
@@ -166,7 +174,7 @@ def index():
         production_summary = get_production_summary()
         
         # 获取预警数量
-        warnings_count = len(warning_system.get_current_warnings())
+        warnings_count = len(warning_system.get_current_warnings()) if warning_system else 0
         
         return render_template('index.html', 
                              system_status=system_status,
@@ -184,9 +192,10 @@ def dashboard():
     """仪表板"""
     try:
         # 获取完整的仪表板数据
+        warnings = warning_system.get_current_warnings()[:5] if warning_system else []
         dashboard_data = {
             'latest_data': get_latest_environmental_data(),
-            'warnings': warning_system.get_current_warnings()[:5],  # 最新5条预警
+            'warnings': warnings,  # 最新5条预警
             'market_summary': get_market_summary(),
             'production_summary': get_production_summary(),
             'current_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
