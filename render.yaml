@@ -1,14 +1,19 @@
 services:
   - type: web
-    name: langjiayuan-jujube-monitoring
+    name: langjiayuan-monitoring
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    buildCommand: |
+      pip install -r requirements_full.txt
+      python -c "from app_full import ensure_database; ensure_database()"
+    startCommand: gunicorn app_full:app --bind 0.0.0.0:$PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.9.18
+      - key: PYTHONPATH
+        value: .
       - key: DATABASE_URL
         value: sqlite:///agriculture.db
-      - key: SECRET_KEY
-        generateValue: true 
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        sync: false
+    healthCheckPath: / 
