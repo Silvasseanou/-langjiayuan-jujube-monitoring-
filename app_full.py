@@ -7,56 +7,33 @@ import os
 import sqlite3
 import random
 
-try:
-    from config import Config
-    from models.database import init_database
-    from modules.data_preprocessing import DataPreprocessor
-    from modules.warning_system import WarningSystem
-    from modules.pest_control import PestControlDecisionSupport
-    from modules.market_analysis import MarketAnalyzer, BrandPromotion, DataCollector
-    from modules.traceability import TraceabilityManager
-    
-    # 创建Flask应用
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    
-    # 启用CORS
-    CORS(app)
-    
-    # 初始化数据库
-    engine, Session = init_database(app.config['DATABASE_URL'])
-    
-    # 初始化各个模块
-    config = Config()
-    data_preprocessor = DataPreprocessor(config)
-    warning_system = WarningSystem(config)
-    pest_control = PestControlDecisionSupport(config)
-    market_analyzer = MarketAnalyzer(config)
-    brand_promotion = BrandPromotion(config)
-    traceability_manager = TraceabilityManager(config)
-    data_collector = DataCollector(config)
-    
-except ImportError as e:
-    print(f"Warning: Some modules not available: {e}")
-    # 创建基本Flask应用
-    app = Flask(__name__)
-    app.config['DATABASE_URL'] = 'sqlite:///agriculture.db'
-    CORS(app)
-    
-    # 创建简化的配置
-    class SimpleConfig:
-        DATABASE_URL = 'sqlite:///agriculture.db'
-        SECRET_KEY = 'dev-key'
-    
-    config = SimpleConfig()
-    engine, Session = None, None
-    data_preprocessor = None
-    warning_system = None
-    pest_control = None
-    market_analyzer = None
-    brand_promotion = None
-    traceability_manager = None
-    data_collector = None
+from config import Config
+from models.database import init_database
+from modules.data_preprocessing import DataPreprocessor
+from modules.warning_system import WarningSystem
+from modules.pest_control import PestControlDecisionSupport
+from modules.market_analysis import MarketAnalyzer, BrandPromotion, DataCollector
+from modules.traceability import TraceabilityManager
+
+# 创建Flask应用
+app = Flask(__name__)
+app.config.from_object(Config)
+
+# 启用CORS
+CORS(app)
+
+# 初始化数据库
+engine, Session = init_database(app.config['DATABASE_URL'])
+
+# 初始化各个模块
+config = Config()
+data_preprocessor = DataPreprocessor(config)
+warning_system = WarningSystem(config)
+pest_control = PestControlDecisionSupport(config)
+market_analyzer = MarketAnalyzer(config)
+brand_promotion = BrandPromotion(config)
+traceability_manager = TraceabilityManager(config)
+data_collector = DataCollector(config)
 
 def init_demo_environmental_data():
     """初始化环境演示数据（简化硬件部分）"""
@@ -153,19 +130,11 @@ def index():
         latest_data = get_latest_environmental_data()
         
         # 获取当前风险预测
-        if data_preprocessor:
-            # 尝试获取真实预测
-            current_risk = {
-                "risk_level": "medium", 
-                "probability": 0.5, 
-                "details": "当前环境条件适中，建议加强监控"
-            }
-        else:
-            current_risk = {
-                "risk_level": "medium", 
-                "probability": 0.5, 
-                "details": "当前环境条件适中，建议加强监控"
-            }
+        current_risk = {
+            "risk_level": "medium", 
+            "probability": 0.5, 
+            "details": "当前环境条件适中，建议加强监控"
+        }
         
         # 获取市场摘要
         market_summary = get_market_summary()
@@ -174,7 +143,7 @@ def index():
         production_summary = get_production_summary()
         
         # 获取预警数量
-        warnings_count = len(warning_system.get_current_warnings()) if warning_system else 0
+        warnings_count = len(warning_system.get_current_warnings())
         
         return render_template('index.html', 
                              system_status=system_status,
@@ -192,7 +161,7 @@ def dashboard():
     """仪表板"""
     try:
         # 获取完整的仪表板数据
-        warnings = warning_system.get_current_warnings()[:5] if warning_system else []
+        warnings = warning_system.get_current_warnings()[:5]
         dashboard_data = {
             'latest_data': get_latest_environmental_data(),
             'warnings': warnings,  # 最新5条预警
@@ -285,18 +254,7 @@ def api_predictions():
 def api_warnings():
     """获取预警信息API"""
     try:
-        if warning_system:
-            warnings = warning_system.get_current_warnings()
-        else:
-            warnings = [
-                {
-                    'id': 1,
-                    'type': 'environment',
-                    'severity': 'medium',
-                    'message': '土壤湿度偏低，建议增加灌溉',
-                    'timestamp': datetime.now().isoformat()
-                }
-            ]
+        warnings = warning_system.get_current_warnings()
         return jsonify(warnings)
     except Exception as e:
         logging.error(f"Error in warnings API: {e}")
@@ -310,27 +268,7 @@ def api_treatment_plan():
         pest_type = data.get('pest_type', 'aphids')
         severity = data.get('severity', 'medium')
         
-        if pest_control:
-            plan = pest_control.get_treatment_plan(pest_type, severity)
-        else:
-            plan = {
-                'pest_type': pest_type,
-                'severity': severity,
-                'treatments': [
-                    {
-                        'type': 'biological',
-                        'method': '生物防治',
-                        'effectiveness': 0.8,
-                        'description': '使用天敌昆虫进行生物防治'
-                    },
-                    {
-                        'type': 'physical',
-                        'method': '物理防治',
-                        'effectiveness': 0.6,
-                        'description': '使用防虫网和黄板诱杀'
-                    }
-                ]
-            }
+        plan = pest_control.get_treatment_plan(pest_type, severity)
         return jsonify(plan)
     except Exception as e:
         logging.error(f"Error in treatment plan API: {e}")
@@ -340,16 +278,9 @@ def api_treatment_plan():
 def api_market_analysis():
     """获取市场分析API - 使用真实爬虫数据"""
     try:
-        # 强制使用爬虫功能收集数据
-        try:
-            from modules.market_analysis import DataCollector, MarketAnalyzer
-            crawler = DataCollector(config)
-            analyzer = MarketAnalyzer(config) if market_analyzer else None
-        except ImportError:
-            # 使用简化版
-            from modules.market_analysis_simplified import DataCollector, MarketAnalyzer
-            crawler = DataCollector(config)
-            analyzer = MarketAnalyzer(config)
+        # 使用完整版爬虫功能收集数据
+        crawler = data_collector
+        analyzer = market_analyzer
         
         # 收集市场数据（使用真实爬虫）
         market_data = crawler.collect_ecommerce_data()
@@ -359,46 +290,7 @@ def api_market_analysis():
             crawler.save_data_to_db(market_data)
         
         # 生成市场分析报告
-        if analyzer:
-            analysis = analyzer.generate_market_report()
-        else:
-            # 基于爬虫数据生成分析
-            analysis = {
-                'crawl_results': {
-                    'total_data_collected': len(market_data),
-                    'platforms_covered': ['taobao', 'tmall', 'jd', 'pinduoduo'],
-                    'data_freshness': 'real_time',
-                    'last_updated': datetime.now().isoformat()
-                },
-                'price_analysis': {
-                    'average_price': sum(item.get('price', 0) for item in market_data) / len(market_data) if market_data else 35.6,
-                    'price_range': {
-                        'min': min(item.get('price', 0) for item in market_data) if market_data else 15.0,
-                        'max': max(item.get('price', 0) for item in market_data) if market_data else 80.0
-                    },
-                    'platform_comparison': {
-                        'taobao': 32.5,
-                        'tmall': 42.3,
-                        'jd': 38.9,
-                        'pinduoduo': 28.7
-                    }
-                },
-                'sales_analysis': {
-                    'total_sales': sum(item.get('sales_volume', 0) for item in market_data) if market_data else 12450,
-                    'trending_products': ['山东沾化冬枣', '陕西大荔冬枣', '河北黄骅冬枣'],
-                    'seasonal_trends': 'winter_peak'
-                },
-                'consumer_preferences': {
-                    'rating_distribution': {'5star': 45, '4star': 35, '3star': 15, '2star': 3, '1star': 2},
-                    'keyword_analysis': ['新鲜', '脆甜', '大粒', '营养', '健康'],
-                    'sentiment_score': 0.75
-                },
-                'market_opportunities': {
-                    'growth_potential': 'high',
-                    'recommended_strategies': ['品质提升', '品牌建设', '线上推广'],
-                    'target_segments': ['健康食品爱好者', '孕妇群体', '中老年人']
-                }
-            }
+        analysis = analyzer.generate_market_report()
         
         return jsonify(analysis)
     except Exception as e:
@@ -411,16 +303,8 @@ def api_collect_market_data():
     try:
         platforms = request.get_json().get('platforms', ['taobao', 'tmall', 'jd', 'pinduoduo'])
         
-        # 直接使用爬虫功能收集数据
-        try:
-            from modules.market_analysis import DataCollector
-            if not data_collector:
-                temp_collector = DataCollector(config)
-            else:
-                temp_collector = data_collector
-        except ImportError:
-            from modules.market_analysis_simplified import DataCollector
-            temp_collector = DataCollector(config)
+        # 使用完整版爬虫功能收集数据
+        temp_collector = data_collector
             
         # 收集电商数据 - 强制执行爬虫
         ecommerce_data = temp_collector.collect_ecommerce_data(platforms)
@@ -448,46 +332,7 @@ def api_collect_market_data():
 def api_product_trace(product_id):
     """获取产品追溯信息API"""
     try:
-        if traceability_manager:
-            trace_info = traceability_manager.get_product_trace_info(product_id)
-        else:
-            trace_info = {
-                'product_id': product_id,
-                'basic_info': {
-                    'name': '郎家园优质冬枣',
-                    'variety': '沾化冬枣',
-                    'grade': 'A级',
-                    'origin': '山东沾化地区'
-                },
-                'planting_record': {
-                    'planting_date': '2024-03-15',
-                    'location': '山东沾化郎家园农场',
-                    'soil_type': '盐碱土壤',
-                    'irrigation': '滴灌技术'
-                },
-                'growth_record': [
-                    {'date': '2024-04-01', 'stage': '发芽期', 'weather': '晴朗', 'temperature': '18°C'},
-                    {'date': '2024-05-15', 'stage': '开花期', 'weather': '多云', 'temperature': '25°C'},
-                    {'date': '2024-07-20', 'stage': '结果期', 'weather': '晴朗', 'temperature': '32°C'}
-                ],
-                'harvest_info': {
-                    'harvest_date': '2024-10-15',
-                    'weather': '晴朗微风',
-                    'quality_grade': 'A级',
-                    'sugar_content': '18%',
-                    'crisp_level': '优'
-                },
-                'processing_record': {
-                    'processing_date': '2024-09-12',
-                    'method': '自然晾晒',
-                    'quality_check': '已通过',
-                    'packaging_date': '2024-09-15'
-                },
-                'certificates': [
-                    {'type': '有机认证', 'number': 'ORG-2024-001', 'valid_until': '2025-09-10'},
-                    {'type': '质量检测', 'number': 'QC-2024-0912', 'result': '合格'}
-                ]
-            }
+        trace_info = traceability_manager.get_product_trace_info(product_id)
         return jsonify(trace_info)
     except Exception as e:
         logging.error(f"Error in product trace API: {e}")
@@ -499,13 +344,8 @@ def api_product_create():
     try:
         data = request.get_json()
         
-        if traceability_manager:
-            product_info = traceability_manager.create_product_record(data)
-            product_id = product_info.get('product_id')
-        else:
-            # 生成简单的产品ID
-            import uuid
-            product_id = str(uuid.uuid4())[:8]
+        product_info = traceability_manager.create_product_record(data)
+        product_id = product_info.get('product_id')
         
         return jsonify({
             'success': True,
@@ -524,13 +364,8 @@ def api_crawler_start():
         platform = data.get('platform', 'taobao')
         keywords = data.get('keywords', ['冬枣', '沾化冬枣'])
         
-        # 直接启动爬虫任务
-        try:
-            from modules.market_analysis import DataCollector
-            crawler = DataCollector(config)
-        except ImportError:
-            from modules.market_analysis_simplified import DataCollector
-            crawler = DataCollector(config)
+        # 使用完整版爬虫任务
+        crawler = data_collector
         
         # 根据平台执行对应的爬虫
         if platform == 'taobao':
@@ -744,43 +579,35 @@ def get_latest_environmental_data():
 def get_market_summary():
     """获取市场摘要"""
     try:
-        if market_analyzer:
-            # 尝试从真实数据获取，失败则使用模拟数据
-            market_df = market_analyzer.load_market_data(7)
-            
-            if not market_df.empty:
-                return {
-                    'total_products': len(market_df),
-                    'average_price': round(market_df['price'].mean(), 2),
-                    'total_sales': int(market_df['sales_volume'].sum()),
-                    'average_rating': round(market_df['rating'].mean(), 2)
-                }
+        # 使用完整版市场分析器
+        market_df = market_analyzer.load_market_data(7)
         
-        # 使用模拟数据
+        if not market_df.empty:
+            return {
+                'total_products': len(market_df),
+                'average_price': round(market_df['price'].mean(), 2),
+                'total_sales': int(market_df['sales_volume'].sum()),
+                'average_rating': round(market_df['rating'].mean(), 2)
+            }
+        
+        # 如果没有数据，返回空状态
         return {
-            'total_products': 150,
-            'average_price': 35.6,
-            'total_sales': 12340,
-            'average_rating': 4.2
+            'total_products': 0,
+            'average_price': 0.0,
+            'total_sales': 0,
+            'average_rating': 0.0,
+            'message': '正在收集市场数据...'
         }
     except Exception as e:
         logging.error(f"Error getting market summary: {e}")
-        return {
-            'total_products': 150,
-            'average_price': 35.6,
-            'total_sales': 12340,
-            'average_rating': 4.2
-        }
+        raise e
 
 def get_production_summary():
     """获取生产摘要"""
     try:
-        if traceability_manager:
-            # 获取产品追溯统计
-            products = traceability_manager.search_products({})
-            total_products = len(products) if products else 50
-        else:
-            total_products = 50
+        # 使用完整版追溯管理器
+        products = traceability_manager.search_products({})
+        total_products = len(products) if products else 0
         
         return {
             'total_products': total_products,
@@ -788,10 +615,7 @@ def get_production_summary():
         }
     except Exception as e:
         logging.error(f"Error getting production summary: {e}")
-        return {
-            'total_products': 50,
-            'quality_rate': 98.5
-        }
+        raise e
 
 # 错误处理
 @app.errorhandler(404)
