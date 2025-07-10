@@ -12,8 +12,6 @@ services:
         value: sqlite:///agriculture.db
       - key: FLASK_ENV
         value: production
-      - key: PORT
-        sync: false
       - key: SCRAPY_SETTINGS_MODULE
         value: settings
     healthCheckPath: / 
