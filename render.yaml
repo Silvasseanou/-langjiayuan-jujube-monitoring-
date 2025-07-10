@@ -3,10 +3,7 @@ services:
     name: langjiayuan-monitoring
     env: python
     plan: free
-    buildCommand: |
-      pip install --upgrade pip
-      pip install -r requirements.txt
-      python -c "import sqlite3; conn = sqlite3.connect('agriculture.db'); conn.close(); print('Database initialized')"
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: gunicorn app_full:app --bind 0.0.0.0:$PORT --timeout 120
     envVars:
       - key: PYTHONPATH

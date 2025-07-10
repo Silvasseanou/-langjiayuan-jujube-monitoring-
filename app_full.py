@@ -672,6 +672,18 @@ def settings():
         logging.error(f"Error in settings route: {e}")
         return render_template('error.html', error=str(e))
 
+@app.route('/api/version')
+def api_version():
+    """获取系统版本信息"""
+    import sys
+    return jsonify({
+        'python_version': sys.version,
+        'python_version_info': list(sys.version_info),
+        'system_name': '郎家园冬枣监控系统',
+        'version': '2.0.0',
+        'environment': 'production'
+    })
+
 # 辅助函数
 def get_system_status():
     """获取系统状态"""
