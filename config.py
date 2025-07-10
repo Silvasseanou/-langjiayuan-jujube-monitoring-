@@ -59,6 +59,7 @@ class Config:
     
     # API键配置
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+    FCM_SERVER_KEY = os.environ.get('FCM_SERVER_KEY')
     
     # 上传文件配置
     UPLOAD_FOLDER = 'uploads'

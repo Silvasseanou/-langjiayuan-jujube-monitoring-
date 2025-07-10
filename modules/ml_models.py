@@ -14,56 +14,77 @@ from sklearn.model_selection import train_test_split, cross_val_score, GridSearc
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 
-# 深度学习库
-import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Input, Attention
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.optimizers import Adam
+# 深度学习库 - 智能降级
+try:
+    import tensorflow as tf
+    from tensorflow.keras.models import Sequential, Model
+    from tensorflow.keras.layers import LSTM, Dense, Dropout, Input, Attention
+    from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+    from tensorflow.keras.optimizers import Adam
+    HAS_TENSORFLOW = True
+except ImportError:
+    HAS_TENSORFLOW = False
+    logging.warning("tensorflow not available, deep learning models will be disabled")
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    from torch.utils.data import Dataset, DataLoader
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
+    logging.warning("torch not available, PyTorch models will be disabled")
 
 from config import Config
 from models.database import PestDiseaseData, PredictionResult, init_database
 from modules.data_preprocessing import DataPreprocessor
 
-class PestDiseaseDataset(Dataset):
-    """PyTorch数据集类"""
-    
-    def __init__(self, features, labels):
-        self.features = torch.FloatTensor(features)
-        self.labels = torch.LongTensor(labels)
-    
-    def __len__(self):
-        return len(self.features)
-    
-    def __getitem__(self, idx):
-        return self.features[idx], self.labels[idx]
+# PyTorch相关类（仅在torch可用时定义）
+if HAS_TORCH:
+    class PestDiseaseDataset(Dataset):
+        """PyTorch数据集类"""
+        
+        def __init__(self, features, labels):
+            self.features = torch.FloatTensor(features)
+            self.labels = torch.LongTensor(labels)
+        
+        def __len__(self):
+            return len(self.features)
+        
+        def __getitem__(self, idx):
+            return self.features[idx], self.labels[idx]
 
-class LSTMModel(nn.Module):
-    """LSTM模型用于时序预测"""
+    class LSTMModel(nn.Module):
+        """LSTM模型用于时序预测"""
+        
+        def __init__(self, input_size, hidden_size, num_layers, num_classes, dropout_rate=0.2):
+            super(LSTMModel, self).__init__()
+            self.hidden_size = hidden_size
+            self.num_layers = num_layers
+            
+            self.lstm = nn.LSTM(input_size, hidden_size, num_layers, 
+                               dropout=dropout_rate, batch_first=True)
+            self.dropout = nn.Dropout(dropout_rate)
+            self.fc = nn.Linear(hidden_size, num_classes)
+            
+        def forward(self, x):
+            h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+            c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
+            
+            out, _ = self.lstm(x, (h0, c0))
+            out = self.dropout(out[:, -1, :])
+            out = self.fc(out)
+            return out
+else:
+    # 如果torch不可用，定义占位符类
+    class PestDiseaseDataset:
+        def __init__(self, features, labels):
+            logging.warning("PyTorch not available, dataset functionality disabled")
     
-    def __init__(self, input_size, hidden_size, num_layers, num_classes, dropout_rate=0.2):
-        super(LSTMModel, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, 
-                           dropout=dropout_rate, batch_first=True)
-        self.dropout = nn.Dropout(dropout_rate)
-        self.fc = nn.Linear(hidden_size, num_classes)
-        
-    def forward(self, x):
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
-        
-        out, _ = self.lstm(x, (h0, c0))
-        out = self.dropout(out[:, -1, :])
-        out = self.fc(out)
-        return out
+    class LSTMModel:
+        def __init__(self, *args, **kwargs):
+            logging.warning("PyTorch not available, LSTM model disabled")
 
 class PestDiseasePredictor:
     """病虫害预测模型管理器"""
@@ -221,6 +242,10 @@ class PestDiseasePredictor:
     def create_lstm_model(self, input_shape: Tuple, num_classes: int) -> Model:
         """创建LSTM模型"""
         try:
+            if not HAS_TENSORFLOW:
+                logging.warning("TensorFlow not available, LSTM model creation skipped")
+                return None
+                
             model = Sequential([
                 LSTM(64, return_sequences=True, input_shape=input_shape),
                 Dropout(0.2),
@@ -275,11 +300,18 @@ class PestDiseasePredictor:
     def train_lstm_model(self, X: np.ndarray, y: np.ndarray) -> Model:
         """训练LSTM模型"""
         try:
+            if not HAS_TENSORFLOW:
+                logging.warning("TensorFlow not available, LSTM model training skipped")
+                return None
+                
             # 分割数据
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             
             # 创建模型
             model = self.create_lstm_model((X.shape[1], X.shape[2]), 2)
+            
+            if model is None:
+                return None
             
             # 训练配置
             callbacks = [
@@ -342,7 +374,7 @@ class PestDiseasePredictor:
                 joblib.dump(gb_model, self.model_dir / 'gradient_boosting_model.pkl')
             
             # 准备序列数据并训练LSTM
-            if len(env_data) > 48:  # 确保有足够的数据创建序列
+            if len(env_data) > 48 and HAS_TENSORFLOW:  # 确保有足够的数据创建序列且tensorflow可用
                 logging.info("Preparing sequence data for LSTM...")
                 X_seq, y_seq = self.prepare_sequence_data(env_data.merge(pest_data, on='timestamp', how='left'))
                 
@@ -352,6 +384,8 @@ class PestDiseasePredictor:
                     if lstm_model:
                         self.models['lstm'] = lstm_model
                         lstm_model.save(str(self.model_dir / 'lstm_model.h5'))
+            elif len(env_data) > 48:
+                logging.warning("Sufficient data for LSTM training but TensorFlow not available")
             
             # 保存标签编码器
             joblib.dump(self.label_encoders, self.model_dir / 'label_encoders.pkl')
@@ -377,9 +411,11 @@ class PestDiseasePredictor:
             
             # 加载LSTM模型
             lstm_path = self.model_dir / 'lstm_model.h5'
-            if lstm_path.exists():
+            if lstm_path.exists() and HAS_TENSORFLOW:
                 self.models['lstm'] = tf.keras.models.load_model(str(lstm_path))
                 logging.info("LSTM model loaded")
+            elif lstm_path.exists():
+                logging.warning("LSTM model file found but TensorFlow not available")
             
             # 加载标签编码器
             encoder_path = self.model_dir / 'label_encoders.pkl'
