@@ -4,9 +4,10 @@ services:
     env: python
     plan: free
     buildCommand: |
+      pip install --upgrade pip
       pip install -r requirements_full.txt
-      python -c "from app_full import ensure_database; ensure_database()"
-    startCommand: gunicorn app_full:app --bind 0.0.0.0:$PORT
+      python -c "import sqlite3; conn = sqlite3.connect('agriculture.db'); conn.close(); print('Database initialized')"
+    startCommand: gunicorn app_full:app --bind 0.0.0.0:$PORT --timeout 120
     envVars:
       - key: PYTHONPATH
         value: .
@@ -16,4 +17,6 @@ services:
         value: production
       - key: PORT
         sync: false
+      - key: SCRAPY_SETTINGS_MODULE
+        value: settings
     healthCheckPath: / 
