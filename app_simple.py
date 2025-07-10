@@ -67,6 +67,38 @@ def init_demo_data():
     except Exception as e:
         print(f"❌ 数据初始化失败: {e}")
 
+def ensure_database():
+    """确保数据库和表格存在"""
+    try:
+        if not os.path.exists('agriculture.db') or os.path.getsize('agriculture.db') == 0:
+            print("🔄 正在初始化演示数据...")
+            init_demo_data()
+        else:
+            # 确保表格存在
+            conn = sqlite3.connect('agriculture.db')
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS environmental_data (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME NOT NULL,
+                    temperature REAL NOT NULL,
+                    humidity REAL NOT NULL,
+                    soil_moisture REAL NOT NULL,
+                    light_intensity REAL NOT NULL,
+                    wind_speed REAL NOT NULL,
+                    rainfall REAL NOT NULL,
+                    air_pressure REAL NOT NULL
+                )
+            ''')
+            conn.commit()
+            conn.close()
+            print("✅ 数据库表格检查完成")
+    except Exception as e:
+        print(f"❌ 数据库初始化失败: {e}")
+
+# 应用启动时立即初始化数据库
+ensure_database()
+
 @app.route('/')
 def index():
     """首页"""
@@ -163,6 +195,9 @@ def api_environmental_data():
     """获取环境数据API"""
     try:
         days = request.args.get('days', 7, type=int)
+        
+        # 确保数据库和表格存在
+        ensure_database()
         
         conn = sqlite3.connect('agriculture.db')
         cursor = conn.cursor()
@@ -350,11 +385,6 @@ if __name__ == '__main__':
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
-    
-    # 初始化演示数据
-    if not os.path.exists('agriculture.db') or os.path.getsize('agriculture.db') == 0:
-        print("🔄 正在初始化演示数据...")
-        init_demo_data()
     
     # 启动应用
     port = int(os.environ.get('PORT', 8080))
